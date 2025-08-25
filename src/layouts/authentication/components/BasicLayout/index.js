@@ -28,11 +28,18 @@ import PageLayout from "examples/LayoutContainers/PageLayout";
 
 // Authentication pages components
 import Footer from "layouts/authentication/components/Footer";
-
+import { FormControl, Select, MenuItem } from "@mui/material";
+import { useTranslation } from "react-i18next";
 function BasicLayout({ image, children }) {
+  const { i18n } = useTranslation();
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
+
   return (
     <PageLayout>
-      {/* <DefaultNavbar
+      {/* <DefaultNavbar    
         action={{
           type: "external",
           route: "https://creative-tim.com/product/material-dashboard-react",
@@ -57,6 +64,38 @@ function BasicLayout({ image, children }) {
         }}
       />
       <MDBox px={1} width="100%" height="100vh" mx="auto">
+        <MDBox display="flex" justifyContent="flex-end" alignItems="center">
+          <FormControl
+            size="small"
+            sx={{
+              minWidth: 120,
+              backgroundColor: "#fff",
+              borderRadius: "8px",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+            }}
+          >
+            <Select
+              value={i18n.language}
+              onChange={(e) => changeLanguage(e.target.value)}
+              displayEmpty
+              sx={{
+                fontSize: "14px",
+                "& .MuiSelect-select": {
+                  py: 1,
+                  px: 2,
+                  textAlign: "center",
+                  background: "#f0f2f5",
+                  color: "#9185b4",
+                },
+              }}
+            >
+              <MenuItem value="en">English</MenuItem>
+              {/* <MenuItem value="hi">हिंदी</MenuItem> */}
+              <MenuItem value="ko">한국어</MenuItem>
+            </Select>
+          </FormControl>
+        </MDBox>
+
         <Grid container spacing={1} justifyContent="center" alignItems="center" height="100%">
           <Grid item xs={11} sm={9} md={5} lg={4} xl={3}>
             {children}

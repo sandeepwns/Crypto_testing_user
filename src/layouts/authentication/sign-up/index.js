@@ -31,8 +31,10 @@ import CoverLayout from "layouts/authentication/components/CoverLayout";
 
 // Images
 import bgImage from "assets/images/bg-sign-up-cover.jpeg";
+import { useTranslation } from "react-i18next";
 
 function Cover() {
+  const { t } = useTranslation();
   return (
     <CoverLayout image={bgImage}>
       <Card>
@@ -48,25 +50,25 @@ function Cover() {
           textAlign="center"
         >
           <MDTypography variant="h5" fontWeight="medium" color="white" mt={1}>
-            Dream Gate Sign up
+            {t("signupTitle")}
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form">
             <MDBox mb={2}>
-              <MDInput type="text" label="Name" variant="standard" fullWidth />
+              <MDInput type="text" label={t("name")} variant="standard" fullWidth />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" variant="standard" fullWidth />
+              <MDInput type="email" label={t("email")} variant="standard" fullWidth />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label="Password" variant="standard" fullWidth />
+              <MDInput type="password" label={t("password")} variant="standard" fullWidth />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label="Confirm password" variant="standard" fullWidth />
+              <MDInput type="password" label={t("confirmPassword")} variant="standard" fullWidth />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="text" label="Referral Code" variant="standard" fullWidth />
+              <MDInput type="text" label={t("referralCode")} variant="standard" fullWidth />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Checkbox />
@@ -76,7 +78,8 @@ function Cover() {
                 color="text"
                 sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
               >
-                &nbsp;&nbsp;I agree the&nbsp;
+                &nbsp;&nbsp;{t("iAgree")}
+                &nbsp;
               </MDTypography>
               <MDTypography
                 component="a"
@@ -86,17 +89,17 @@ function Cover() {
                 color="info"
                 textGradient
               >
-                Terms and Conditions
+                {t("termsAndConditions")}
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
               <MDButton variant="gradient" color="info" fullWidth component={Link} to="/dashboard">
-                sign in
+                {t("signUp")}
               </MDButton>
             </MDBox>
             <MDBox mt={3} mb={1} textAlign="center">
               <MDTypography variant="button" color="text">
-                Already have an account?{" "}
+                {t("alreadyHaveAccount")}
                 <MDTypography
                   component={Link}
                   to="/authentication/sign-in"
@@ -105,7 +108,7 @@ function Cover() {
                   fontWeight="medium"
                   textGradient
                 >
-                  Sign In
+                  {t("signIn")}
                 </MDTypography>
               </MDTypography>
             </MDBox>

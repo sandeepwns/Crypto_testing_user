@@ -20,13 +20,17 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
 import MDBadge from "components/MDBadge";
+import { Switch } from "@mui/material";
 
 // Images
 import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function data() {
+  const { t } = useTranslation();
   const Author = ({ image, name, email }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
       <MDAvatar src={image} name={name} size="sm" />
@@ -38,6 +42,11 @@ export default function data() {
       </MDBox>
     </MDBox>
   );
+  const [isActive, setIsActive] = useState(true);
+
+  const handleToggle = () => {
+    setIsActive(!isActive);
+  };
 
   const Job = ({ title, description }) => (
     <MDBox lineHeight={1} textAlign="left">
@@ -50,119 +59,161 @@ export default function data() {
 
   return {
     columns: [
-      { Header: "author", accessor: "author", width: "45%", align: "left" },
-      { Header: "status", accessor: "status", align: "center" },
-      { Header: "employed", accessor: "employed", align: "center" },
-      { Header: "action", accessor: "action", align: "center" },
+      { Header: t("name"), accessor: "author", width: "35%", align: "left" },
+      { Header: t("email"), accessor: "email", align: "left" },
+      { Header: t("referredBy"), accessor: "status", align: "center" },
+      { Header: t("action"), accessor: "action", align: "center" },
     ],
 
     rows: [
       {
         author: <Author image={team2} name="John Michael" email="john@creative-tim.com" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge badgeContent="online" color="success" variant="gradient" size="sm" />
-          </MDBox>
+        email: (
+          <MDTypography variant="caption" color="text" fontWeight="medium">
+            john@creative-tim.com
+          </MDTypography>
         ),
-        employed: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            23/04/18
+        status: (
+          <MDTypography variant="caption" color="text" fontWeight="medium">
+            Admin
           </MDTypography>
         ),
         action: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            Edit
-          </MDTypography>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Switch checked={isActive} onChange={handleToggle} color="primary" />
+            <MDTypography
+              variant="caption"
+              color={isActive ? "success" : "error"}
+              fontWeight="medium"
+            >
+              {isActive ? t("active") : t("inactive")}
+            </MDTypography>
+          </div>
         ),
       },
       {
-        author: <Author image={team3} name="Alexa Liras" email="alexa@creative-tim.com" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge badgeContent="offline" color="dark" variant="gradient" size="sm" />
-          </MDBox>
+        author: <Author image={team3} name="Alexa Liras" email="Alexa@creative-tim.com" />,
+        email: (
+          <MDTypography variant="caption" color="text" fontWeight="medium">
+            Alexa@creative-tim.com
+          </MDTypography>
         ),
-        employed: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            11/01/19
+        status: (
+          <MDTypography variant="caption" color="text" fontWeight="medium">
+            Admin
           </MDTypography>
         ),
         action: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            Edit
-          </MDTypography>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Switch checked={isActive} onChange={handleToggle} color="primary" />
+            <MDTypography
+              variant="caption"
+              color={isActive ? "success" : "error"}
+              fontWeight="medium"
+            >
+              {isActive ? t("active") : t("inactive")}
+            </MDTypography>
+          </div>
         ),
       },
       {
-        author: <Author image={team4} name="Laurent Perrier" email="laurent@creative-tim.com" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge badgeContent="online" color="success" variant="gradient" size="sm" />
-          </MDBox>
+        author: <Author image={team4} name="Laurent Perrier" email="Laurent@creative-tim.com" />,
+        email: (
+          <MDTypography variant="caption" color="text" fontWeight="medium">
+            Laurent@creative-tim.com
+          </MDTypography>
         ),
-        employed: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            19/09/17
+        status: (
+          <MDTypography variant="caption" color="text" fontWeight="medium">
+            Admin
           </MDTypography>
         ),
         action: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            Edit
-          </MDTypography>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Switch checked={isActive} onChange={handleToggle} color="primary" />
+            <MDTypography
+              variant="caption"
+              color={isActive ? "success" : "error"}
+              fontWeight="medium"
+            >
+              {isActive ? t("active") : t("inactive")}
+            </MDTypography>
+          </div>
         ),
       },
       {
-        author: <Author image={team3} name="Michael Levi" email="michael@creative-tim.com" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge badgeContent="online" color="success" variant="gradient" size="sm" />
-          </MDBox>
+        author: <Author image={team3} name="Michael Levi" email="Michael@creative-tim.com" />,
+        email: (
+          <MDTypography variant="caption" color="text" fontWeight="medium">
+            Michael@creative-tim.com
+          </MDTypography>
         ),
-        employed: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            24/12/08
+        status: (
+          <MDTypography variant="caption" color="text" fontWeight="medium">
+            Admin
           </MDTypography>
         ),
         action: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            Edit
-          </MDTypography>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Switch checked={isActive} onChange={handleToggle} color="primary" />
+            <MDTypography
+              variant="caption"
+              color={isActive ? "success" : "error"}
+              fontWeight="medium"
+            >
+              {isActive ? t("active") : t("inactive")}
+            </MDTypography>
+          </div>
         ),
       },
       {
-        author: <Author image={team3} name="Richard Gran" email="richard@creative-tim.com" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge badgeContent="offline" color="dark" variant="gradient" size="sm" />
-          </MDBox>
+        author: <Author image={team3} name="Richard Gran" email="Richard@creative-tim.com" />,
+        email: (
+          <MDTypography variant="caption" color="text" fontWeight="medium">
+            Richard@creative-tim.com
+          </MDTypography>
         ),
-        employed: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            04/10/21
+        status: (
+          <MDTypography variant="caption" color="text" fontWeight="medium">
+            Admin
           </MDTypography>
         ),
         action: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            Edit
-          </MDTypography>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Switch checked={isActive} onChange={handleToggle} color="primary" />
+            <MDTypography
+              variant="caption"
+              color={isActive ? "success" : "error"}
+              fontWeight="medium"
+            >
+              {isActive ? t("active") : t("inactive")}
+            </MDTypography>
+          </div>
         ),
       },
       {
-        author: <Author image={team4} name="Miriam Eric" email="miriam@creative-tim.com" />,
-        status: (
-          <MDBox ml={-1}>
-            <MDBadge badgeContent="offline" color="dark" variant="gradient" size="sm" />
-          </MDBox>
+        author: <Author image={team4} name="Miriam Eric" email="Miriam@creative-tim.com" />,
+        email: (
+          <MDTypography variant="caption" color="text" fontWeight="medium">
+            Miriam@creative-tim.com
+          </MDTypography>
         ),
-        employed: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            14/09/20
+        status: (
+          <MDTypography variant="caption" color="text" fontWeight="medium">
+            Admin
           </MDTypography>
         ),
         action: (
-          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            Edit
-          </MDTypography>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Switch checked={isActive} onChange={handleToggle} color="primary" />
+            <MDTypography
+              variant="caption"
+              color={isActive ? "success" : "error"}
+              fontWeight="medium"
+            >
+              {isActive ? t("active") : t("inactive")}
+            </MDTypography>
+          </div>
         ),
       },
     ],

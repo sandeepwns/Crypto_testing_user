@@ -38,6 +38,7 @@ import SidenavCollapse from "examples/Sidenav/SidenavCollapse";
 // Custom styles for the Sidenav
 import SidenavRoot from "examples/Sidenav/SidenavRoot";
 import sidenavLogoLabel from "examples/Sidenav/styles/sidenav";
+import { useTranslation } from "react-i18next";
 
 // Material Dashboard 2 React context
 import {
@@ -60,6 +61,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   } else if (whiteSidenav && darkMode) {
     textColor = "inherit";
   }
+  const { t } = useTranslation();
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
 
@@ -83,6 +85,18 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
 
+  const role = localStorage.getItem("role"); // 👈 login ke baad save karna hoga
+  // const filteredRoutes = routes.filter((r) => {
+  //   if (role === "admin") {
+  //     // admin ko sirf AdminDashboard & UserList dikhana
+  //     return r.key === "admindashboard" || r.key === "userlist";
+  //   } else if (role === "user") {
+  //     // user ko sirf Dashboard & ApiKey dikhana
+  //     return r.key === "dashboard" || r.key === "apikey";
+  //   }
+  //   return false;
+  // });
+
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
   const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route }) => {
     let returnValue;
@@ -91,13 +105,13 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       returnValue = href ? (
         <Link
           href={href}
-          key={key}
+          key={t(key)}
           target="_blank"
           rel="noreferrer"
           sx={{ textDecoration: "none" }}
         >
           <SidenavCollapse
-            name={name}
+            name={t(name)}
             icon={icon}
             active={key === collapseName}
             noCollapse={noCollapse}
@@ -105,7 +119,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         </Link>
       ) : (
         <NavLink key={key} to={route}>
-          <SidenavCollapse name={name} icon={icon} active={key === collapseName} />
+          <SidenavCollapse name={t(name)} icon={icon} active={key === collapseName} />
         </NavLink>
       );
     } else if (type === "title") {
@@ -122,7 +136,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           mb={1}
           ml={1}
         >
-          {title}
+          {t(title)}
         </MDTypography>
       );
     } else if (type === "divider") {
@@ -167,7 +181,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}
           >
             <MDTypography component="h6" variant="button" fontWeight="medium" color={textColor}>
-              {brandName}
+              {t("dreamGate")}
             </MDTypography>
           </MDBox>
         </MDBox>

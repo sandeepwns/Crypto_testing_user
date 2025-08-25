@@ -37,12 +37,14 @@ Coded by www.creative-tim.com
 
 // Material Dashboard 2 React layouts
 import Dashboard from "layouts/dashboard";
+import AdminDashboard from "layouts/dashboard/admin-dashboard";
 import Tables from "layouts/tables";
 import Billing from "layouts/billing";
 import RTL from "layouts/rtl";
 import Notifications from "layouts/notifications";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
+import AdminSignIn from "layouts/authentication/sign-in/admin-sign-in/";
 import SignUp from "layouts/authentication/sign-up";
 
 // @mui icons
@@ -51,11 +53,19 @@ import Icon from "@mui/material/Icon";
 const routes = [
   {
     type: "collapse",
-    name: "Dashboard",
+    name: "dashboard",
     key: "dashboard",
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard",
     component: <Dashboard />,
+  },
+  {
+    type: "collapse",
+    name: "admindashboard",
+    key: "admindashboard",
+    icon: <Icon fontSize="small">dashboard</Icon>,
+    route: "/dashboard/admin",
+    component: <AdminDashboard />,
   },
   // {
   //   type: "collapse",
@@ -67,11 +77,19 @@ const routes = [
   // },
   {
     type: "collapse",
-    name: "Api key",
-    key: "billing",
+    name: "apikey",
+    key: "apikey",
     icon: <Icon fontSize="small">key</Icon>,
-    route: "/billing",
+    route: "/apikey",
     component: <Billing />,
+  },
+  {
+    type: "collapse",
+    name: "userlist",
+    key: "userlist",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/tables",
+    component: <Tables />,
   },
   // {
   //   type: "collapse",
@@ -104,6 +122,14 @@ const routes = [
     icon: "",
     route: "/authentication/sign-in",
     component: <SignIn />,
+  },
+  {
+    type: "collapse",
+    name: "",
+    key: "sign-in",
+    icon: "",
+    route: "/authentication/sign-in/admin",
+    component: <AdminSignIn />,
   },
   {
     type: "collapse",

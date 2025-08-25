@@ -34,14 +34,13 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
-import { useTranslation } from "react-i18next";
 
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
 
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
-import LanguageSwitcher from "examples/Navbars/Button";
+import { useTranslation } from "react-i18next";
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
@@ -49,13 +48,12 @@ function Basic() {
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
   const handelSetRole = () => {
-    const role = "User";
+    const role = "Admin";
     localStorage.setItem("role", role);
   };
 
   return (
     <BasicLayout image={bgImage}>
-      {/* <LanguageSwitcher/> */}
       <Card>
         <MDBox
           variant="gradient"
@@ -69,7 +67,7 @@ function Basic() {
           textAlign="center"
         >
           <MDTypography variant="h5" fontWeight="medium" color="white" mt={1}>
-            {t("dreamGateSignIn")}
+            {t("dreamGateAdminSignIn")}
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
@@ -99,26 +97,10 @@ function Basic() {
                 fullWidth
                 onClick={handelSetRole}
                 component={Link}
-                to="/dashboard"
+                to="/dashboard/admin"
               >
                 {t("signIn")}
               </MDButton>
-            </MDBox>
-            <MDBox mt={3} mb={1} textAlign="center">
-              <MDTypography variant="button" color="text">
-                {/* Don&apos;t have an account?{" "} */}
-                {t("dontHaveAccount")}
-                <MDTypography
-                  component={Link}
-                  to="/authentication/sign-up"
-                  variant="button"
-                  color="info"
-                  fontWeight="medium"
-                  textGradient
-                >
-                  {t("signUp")}
-                </MDTypography>
-              </MDTypography>
             </MDBox>
           </MDBox>
         </MDBox>

@@ -26,10 +26,13 @@ import MDBox from "components/MDBox";
 
 // Material Dashboard 2 React context
 import { useMaterialUIController, setLayout } from "context";
+import { useTranslation } from "react-i18next";
 
 function PageLayout({ background, children }) {
   const [, dispatch] = useMaterialUIController();
   const { pathname } = useLocation();
+  const { t } = useTranslation();
+  console.log("Hello children :", children);
 
   useEffect(() => {
     setLayout(dispatch, "page");

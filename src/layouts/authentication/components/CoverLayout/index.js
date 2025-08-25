@@ -26,11 +26,18 @@ import MDBox from "components/MDBox";
 // Material Dashboard 2 React example components
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import PageLayout from "examples/LayoutContainers/PageLayout";
+import { FormControl, Select, MenuItem } from "@mui/material";
 
 // Authentication layout components
 import Footer from "layouts/authentication/components/Footer";
+import { useTranslation } from "react-i18next";
 
 function CoverLayout({ coverHeight, image, children }) {
+  const { i18n } = useTranslation();
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
+
   return (
     <PageLayout>
       {/* <DefaultNavbar
@@ -63,6 +70,41 @@ function CoverLayout({ coverHeight, image, children }) {
         }}
       />
       <MDBox mt={{ xs: -20, lg: -18 }} px={1} width="calc(100% - 2rem)" mx="auto">
+        <MDBox display="flex" justifyContent="flex-end">
+          <FormControl
+            size="small"
+            sx={{
+              minWidth: 120,
+              backgroundColor: "#fff",
+              borderRadius: "8px",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+            }}
+          >
+            <Select
+              value={i18n.language}
+              onChange={(e) => changeLanguage(e.target.value)}
+              displayEmpty
+              sx={{
+                fontSize: "14px",
+                "& .MuiSelect-select": {
+                  py: 1,
+                  px: 2,
+                  textAlign: "center",
+                  background: "#f0f2f5",
+                  color: "#9185b4",
+                },
+                "& .MuiSelect-icon": {
+                  color: "#9185b4", // 👈 arrow icon color change
+                  right: 8, // 👈 position adjust
+                },
+              }}
+            >
+              <MenuItem value="en">English</MenuItem>
+              {/* <MenuItem value="hi">हिंदी</MenuItem> */}
+              <MenuItem value="ko">한국어</MenuItem>
+            </Select>
+          </FormControl>
+        </MDBox>
         <Grid container spacing={1} justifyContent="center">
           <Grid item xs={11} sm={9} md={5} lg={4} xl={3}>
             {children}
