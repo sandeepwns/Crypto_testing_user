@@ -84,6 +84,11 @@ function Basic() {
     try {
       const res = await login({ email, password });
 
+      if (res.data.user.status === "Inactive") {
+        setServerError(t("InactiveMessage")); // ✅ t() se translation string milegi
+        return; // login stop
+      }
+
       // 🔑 Token save
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.user.role || "User");

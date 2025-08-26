@@ -41,6 +41,7 @@ i18n
           termsAndConditions: "Terms and Conditions",
           alreadyHaveAccount: "Already have an account?",
           iAgree: "I agree the",
+          InactiveMessage: "You are Inactive. Please contact admin.",
         },
       },
       ko: {
@@ -79,6 +80,7 @@ i18n
           signUp: "회원가입",
           signIn: "로그인",
           password: "비밀번호",
+          InactiveMessage: "현재 활동이 없습니다. 관리자에게 문의하세요.",
         },
       },
     },

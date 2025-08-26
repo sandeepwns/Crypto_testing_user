@@ -58,7 +58,7 @@ const routes = [
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard",
     component: <Dashboard />,
-    allowedRoles: ["User"],
+    allowedRoles: ["user"],
   },
   {
     type: "collapse",
@@ -84,7 +84,7 @@ const routes = [
     icon: <Icon fontSize="small">key</Icon>,
     route: "/apikey",
     component: <Billing />,
-    allowedRoles: ["User"],
+    allowedRoles: ["user"],
   },
   {
     type: "collapse",
