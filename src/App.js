@@ -86,6 +86,7 @@ export default function App() {
       setOnMouseEnter(true);
     }
   };
+  const role = localStorage.getItem("role");
 
   // Close sidenav when mouse leave mini sidenav
   const handleOnMouseLeave = () => {
@@ -180,7 +181,11 @@ export default function App() {
             color={sidenavColor}
             brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
             brandName="Dream Gate"
-            routes={routes}
+            routes={routes.filter(
+              (r) =>
+                !r.allowedRoles || // agar public route hai to dikhao
+                (role && r.allowedRoles.includes(role)) // role ke hisaab se filter
+            )}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
           />

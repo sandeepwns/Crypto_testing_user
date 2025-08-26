@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState } from "react";
 
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -41,17 +41,75 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 import { useTranslation } from "react-i18next";
+import { adminLogin } from "services/api";
+import { ClassSharp } from "@mui/icons-material";
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // 🔹 Error states
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [serverError, setServerError] = useState("");
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
-  const handelSetRole = () => {
-    const role = "Admin";
-    localStorage.setItem("role", role);
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
+    // Reset errors
+    setEmailError("");
+    setPasswordError("");
+    setServerError("");
+
+    let isValid = true;
+
+    if (!email) {
+      setEmailError("Email is required");
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError("Enter a valid email");
+      isValid = false;
+    }
+
+    if (!password) {
+      setPasswordError("Password is required");
+      isValid = false;
+    }
+
+    if (!isValid) return;
+
+    try {
+      // 🔹 API Call
+      const res = await adminLogin({ email, password });
+
+      const { token } = res.data;
+
+      // Save token in storage
+      if (rememberMe) {
+        localStorage.setItem("token", token);
+      } else {
+        sessionStorage.setItem("token", token);
+      }
+
+      // Save role
+      localStorage.setItem("role", res.data.user.role);
+
+      // Redirect based on role
+      if (res.data.user.role === "admin") {
+        navigate("/dashboard/admin");
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (err) {
+      console.log("Error :", err);
+      setServerError(err.response?.data?.message || "Invalid credentials. Try again.");
+    }
+  };
   return (
     <BasicLayout image={bgImage}>
       <Card>
@@ -71,12 +129,32 @@ function Basic() {
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form">
+          <MDBox component="form" role="form" onSubmit={handleSubmit}>
             <MDBox mb={2}>
-              <MDInput type="email" label={t("email")} fullWidth />
+              <MDInput
+                type="email"
+                label={t("email")}
+                fullWidth
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              {emailError && (
+                <MDTypography variant="caption" color="error">
+                  {emailError}
+                </MDTypography>
+              )}
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label={t("password")} fullWidth />
+              <MDInput
+                type="password"
+                label={t("password")}
+                fullWidth
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              {passwordError && (
+                <MDTypography variant="caption" color="error">
+                  {passwordError}
+                </MDTypography>
+              )}
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />
@@ -90,15 +168,15 @@ function Basic() {
                 &nbsp;&nbsp;{t("rememberMe")}
               </MDTypography>
             </MDBox>
+            {/* Server Error */}
+            {serverError && (
+              <MDTypography variant="button" color="error" sx={{ fontSize: "0.9rem" }}>
+                {serverError}
+              </MDTypography>
+            )}
+
             <MDBox mt={4} mb={1}>
-              <MDButton
-                variant="gradient"
-                color="info"
-                fullWidth
-                onClick={handelSetRole}
-                component={Link}
-                to="/dashboard/admin"
-              >
+              <MDButton variant="gradient" color="info" fullWidth type="submit">
                 {t("signIn")}
               </MDButton>
             </MDBox>

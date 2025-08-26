@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState } from "react";
 
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -42,10 +42,61 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 import LanguageSwitcher from "examples/Navbars/Button";
+import { login } from "services/api";
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
   const { t } = useTranslation();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [serverError, setServerError] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setEmailError("");
+    setPasswordError("");
+    setServerError("");
+
+    let isValid = true;
+
+    // ✅ Email validation
+    if (!email) {
+      setEmailError("Email is required");
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError("Enter a valid email");
+      isValid = false;
+    }
+
+    // ✅ Password validation
+    if (!password) {
+      setPasswordError("Password is required");
+      isValid = false;
+    }
+
+    if (!isValid) return;
+
+    try {
+      const res = await login({ email, password });
+
+      // 🔑 Token save
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.role || "User");
+
+      console.log("Login Success:", res.data);
+
+      // ✅ Navigate
+      navigate("/dashboard");
+    } catch (err) {
+      console.log("error:", err);
+      setServerError(err.response?.data?.message || "Invalid email or password");
+    }
+  };
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
   const handelSetRole = () => {
@@ -73,13 +124,40 @@ function Basic() {
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form">
+          <MDBox component="form" role="form" onSubmit={handleLogin}>
             <MDBox mb={2}>
-              <MDInput type="email" label={t("email")} fullWidth />
+              <MDInput
+                type="email"
+                label={t("email")}
+                fullWidth
+                onChange={(e) => setEmail(e.target.value)}
+                // required
+              />
+              {emailError && (
+                <MDTypography variant="caption" color="error">
+                  {emailError}
+                </MDTypography>
+              )}
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label={t("password")} fullWidth />
+              <MDInput
+                type="password"
+                label={t("password")}
+                fullWidth
+                onChange={(e) => setPassword(e.target.value)}
+                // required
+              />
+              {passwordError && (
+                <MDTypography variant="caption" color="error">
+                  {passwordError}
+                </MDTypography>
+              )}
             </MDBox>
+            {serverError && (
+              <MDTypography variant="button" color="error" sx={{ fontSize: "0.9rem" }}>
+                {serverError}
+              </MDTypography>
+            )}
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />
               <MDTypography
@@ -93,14 +171,7 @@ function Basic() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton
-                variant="gradient"
-                color="info"
-                fullWidth
-                onClick={handelSetRole}
-                component={Link}
-                to="/dashboard"
-              >
+              <MDButton variant="gradient" color="info" fullWidth type="submit">
                 {t("signIn")}
               </MDButton>
             </MDBox>

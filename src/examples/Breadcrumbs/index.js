@@ -63,7 +63,6 @@ function Breadcrumbs({ icon, title, route, light }) {
               opacity={light ? 0.8 : 0.5}
               sx={{ lineHeight: 0 }}
             >
-              {console.log("Hello jjjj", el)}
               {t(`${el}`)}
             </MDTypography>
           </Link>

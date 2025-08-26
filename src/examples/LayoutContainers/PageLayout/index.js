@@ -32,7 +32,6 @@ function PageLayout({ background, children }) {
   const [, dispatch] = useMaterialUIController();
   const { pathname } = useLocation();
   const { t } = useTranslation();
-  console.log("Hello children :", children);
 
   useEffect(() => {
     setLayout(dispatch, "page");
