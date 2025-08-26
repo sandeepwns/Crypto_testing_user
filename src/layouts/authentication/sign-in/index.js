@@ -87,8 +87,8 @@ function Basic() {
       if (res.data.user.status === "Inactive") {
         setServerError(t("InactiveMessage")); // ✅ t() se translation string milegi
         return; // login stop
-      const role = res.data.user.role;
-
+        const role = res.data.user.role;
+      }
       // ❌ Agar role admin hai toh error message dikhao
       if (role !== "user") {
         setServerError("Only users are allowed to login here.");
