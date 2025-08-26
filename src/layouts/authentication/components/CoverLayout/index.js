@@ -49,6 +49,7 @@ function CoverLayout({ coverHeight, image, children }) {
         transparent
         light
       /> */}
+
       <MDBox
         width="calc(100% - 2rem)"
         minHeight={coverHeight}
@@ -58,6 +59,7 @@ function CoverLayout({ coverHeight, image, children }) {
         pt={6}
         pb={28}
         sx={{
+          position: "relative",
           backgroundImage: ({ functions: { linearGradient, rgba }, palette: { gradients } }) =>
             image &&
             `${linearGradient(
@@ -68,9 +70,14 @@ function CoverLayout({ coverHeight, image, children }) {
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
         }}
-      />
-      <MDBox mt={{ xs: -20, lg: -18 }} px={1} width="calc(100% - 2rem)" mx="auto">
-        <MDBox display="flex" justifyContent="flex-end">
+      >
+        <MDBox
+          sx={{
+            position: "absolute",
+            top: "12px",
+            right: "16px", // 👈 distance from right
+          }}
+        >
           <FormControl
             size="small"
             sx={{
@@ -105,6 +112,8 @@ function CoverLayout({ coverHeight, image, children }) {
             </Select>
           </FormControl>
         </MDBox>
+      </MDBox>
+      <MDBox mt={{ xs: -20, lg: -18 }} px={1} width="calc(100% - 2rem)" mx="auto">
         <Grid container spacing={1} justifyContent="center">
           <Grid item xs={11} sm={9} md={5} lg={4} xl={3}>
             {children}

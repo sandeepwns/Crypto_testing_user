@@ -18,7 +18,7 @@ import PropTypes from "prop-types";
 
 // @mui material components
 import Grid from "@mui/material/Grid";
-
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 
@@ -64,7 +64,13 @@ function BasicLayout({ image, children }) {
         }}
       />
       <MDBox px={1} width="100%" height="100vh" mx="auto">
-        <MDBox display="flex" justifyContent="flex-end" alignItems="center">
+        <MDBox
+          sx={{
+            position: "absolute",
+            top: "12px",
+            right: "16px",
+          }}
+        >
           <FormControl
             size="small"
             sx={{
@@ -78,6 +84,7 @@ function BasicLayout({ image, children }) {
               value={i18n.language}
               onChange={(e) => changeLanguage(e.target.value)}
               displayEmpty
+              IconComponent={ExpandMoreIcon}
               sx={{
                 fontSize: "14px",
                 "& .MuiSelect-select": {
@@ -87,10 +94,13 @@ function BasicLayout({ image, children }) {
                   background: "#f0f2f5",
                   color: "#9185b4",
                 },
+                "& .MuiSelect-icon": {
+                  color: "#9185b4",
+                  right: 10,
+                },
               }}
             >
               <MenuItem value="en">English</MenuItem>
-              {/* <MenuItem value="hi">हिंदी</MenuItem> */}
               <MenuItem value="ko">한국어</MenuItem>
             </Select>
           </FormControl>
