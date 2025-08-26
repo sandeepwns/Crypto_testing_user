@@ -84,13 +84,21 @@ function Basic() {
     try {
       const res = await login({ email, password });
 
+      const role = res.data.user.role;
+
+      // ❌ Agar role admin hai toh error message dikhao
+      if (role !== "user") {
+        setServerError("Only users are allowed to login here.");
+        return;
+      }
+
       // 🔑 Token save
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.role || "User");
+      localStorage.setItem("role", role);
 
       console.log("Login Success:", res.data);
 
-      // ✅ Navigate
+      // ✅ Navigate user
       navigate("/dashboard");
     } catch (err) {
       console.log("error:", err);
@@ -99,10 +107,6 @@ function Basic() {
   };
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
-  const handelSetRole = () => {
-    const role = "User";
-    localStorage.setItem("role", role);
-  };
 
   return (
     <BasicLayout image={bgImage}>

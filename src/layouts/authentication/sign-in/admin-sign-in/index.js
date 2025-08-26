@@ -87,9 +87,15 @@ function Basic() {
       // 🔹 API Call
       const res = await adminLogin({ email, password });
 
-      const { token } = res.data;
+      const { token, user } = res.data;
 
-      // Save token in storage
+      // ❌ Agar user admin nahi hai toh error dikhado
+      if (user.role !== "admin") {
+        setServerError("Only admins are allowed to login here.");
+        return;
+      }
+
+      // ✅ Save token in storage
       if (rememberMe) {
         localStorage.setItem("token", token);
       } else {
@@ -97,14 +103,11 @@ function Basic() {
       }
 
       // Save role
-      localStorage.setItem("role", res.data.user.role);
+      localStorage.setItem("role", user.role);
+      localStorage.setItem("token", token);
 
-      // Redirect based on role
-      if (res.data.user.role === "admin") {
-        navigate("/dashboard/admin");
-      } else {
-        navigate("/dashboard");
-      }
+      // ✅ Redirect admin
+      navigate("/dashboard/admin");
     } catch (err) {
       console.log("Error :", err);
       setServerError(err.response?.data?.message || "Invalid credentials. Try again.");
