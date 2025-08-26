@@ -1,221 +1,101 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/function-component-definition */
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDAvatar from "components/MDAvatar";
-import MDBadge from "components/MDBadge";
-import { Switch } from "@mui/material";
-
-// Images
-import team2 from "assets/images/team-2.jpg";
-import team3 from "assets/images/team-3.jpg";
-import team4 from "assets/images/team-4.jpg";
-import { useState } from "react";
+import { Switch, Snackbar, Alert } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { useState, useEffect } from "react";
+import { getUsers, changeUserStatus } from "services/api";
 
-export default function data() {
+export default function useAuthorsTableData(page, limit) {
   const { t } = useTranslation();
-  const Author = ({ image, name, email }) => (
-    <MDBox display="flex" alignItems="center" lineHeight={1}>
-      <MDAvatar src={image} name={name} size="sm" />
-      <MDBox ml={2} lineHeight={1}>
-        <MDTypography display="block" variant="button" fontWeight="medium">
-          {name}
-        </MDTypography>
-        <MDTypography variant="caption">{email}</MDTypography>
-      </MDBox>
-    </MDBox>
-  );
-  const [isActive, setIsActive] = useState(true);
+  const [users, setUsers] = useState([]); // Backend users
+  const [totalPages, setTotalPages] = useState(0);
+  const [statusMap, setStatusMap] = useState({}); // Track Active/Inactive
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
-  const handleToggle = () => {
-    setIsActive(!isActive);
+  const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
+
+  const fetchUsers = async () => {
+    try {
+      const res = await getUsers(page, limit);
+      const fetchedUsers = res.data.data || [];
+      setUsers(fetchedUsers);
+      setTotalPages(res.data.totalPages);
+
+      // Initialize statusMap only for new users
+      const map = {};
+      fetchedUsers.forEach((u) => {
+        map[u._id] = statusMap[u._id] ?? u.status === "Active";
+      });
+      setStatusMap(map);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+    }
   };
 
-  const Job = ({ title, description }) => (
-    <MDBox lineHeight={1} textAlign="left">
-      <MDTypography display="block" variant="caption" color="text" fontWeight="medium">
-        {title}
+  useEffect(() => {
+    fetchUsers();
+  }, [page, limit]);
+
+  const toggleStatus = async (userId) => {
+    const newStatus = statusMap[userId] ? "Inactive" : "Active";
+    try {
+      await changeUserStatus(userId, newStatus);
+      setStatusMap({ ...statusMap, [userId]: !statusMap[userId] });
+      setSnackbar({
+        open: true,
+        message: `User status changed to ${newStatus}`,
+        severity: "success",
+      });
+    } catch (err) {
+      console.error("Error changing status:", err);
+      setSnackbar({ open: true, message: "Failed to change status", severity: "error" });
+    }
+  };
+
+  const rows = users.map((user) => ({
+    author: (
+      <MDTypography variant="caption" fontWeight="medium">
+        {user.name}
       </MDTypography>
-      <MDTypography variant="caption">{description}</MDTypography>
-    </MDBox>
-  );
+    ),
+    email: (
+      <MDTypography variant="caption" color="text" fontWeight="medium">
+        {user.email}
+      </MDTypography>
+    ),
+    referredBy: (
+      <MDTypography variant="caption" color="text" fontWeight="medium">
+        {user.referredByCode || "-"}
+      </MDTypography>
+    ),
+    action: (
+      <MDBox display="flex" alignItems="center" gap={1}>
+        <Switch
+          checked={statusMap[user._id]}
+          onChange={() => toggleStatus(user._id)}
+          color="primary"
+        />
+        <MDTypography
+          variant="caption"
+          color={statusMap[user._id] ? "success" : "error"}
+          fontWeight="medium"
+        >
+          {statusMap[user._id] ? t("active") : t("inactive")}
+        </MDTypography>
+      </MDBox>
+    ),
+  }));
 
   return {
     columns: [
-      { Header: t("name"), accessor: "author", width: "35%", align: "left" },
+      { Header: t("name"), accessor: "author", align: "left" },
       { Header: t("email"), accessor: "email", align: "left" },
-      { Header: t("referredBy"), accessor: "status", align: "center" },
+      { Header: t("Referred By"), accessor: "referredBy", align: "center" },
       { Header: t("action"), accessor: "action", align: "center" },
     ],
-
-    rows: [
-      {
-        author: <Author image={team2} name="John Michael" email="john@creative-tim.com" />,
-        email: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            john@creative-tim.com
-          </MDTypography>
-        ),
-        status: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            Admin
-          </MDTypography>
-        ),
-        action: (
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Switch checked={isActive} onChange={handleToggle} color="primary" />
-            <MDTypography
-              variant="caption"
-              color={isActive ? "success" : "error"}
-              fontWeight="medium"
-            >
-              {isActive ? t("active") : t("inactive")}
-            </MDTypography>
-          </div>
-        ),
-      },
-      {
-        author: <Author image={team3} name="Alexa Liras" email="Alexa@creative-tim.com" />,
-        email: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            Alexa@creative-tim.com
-          </MDTypography>
-        ),
-        status: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            Admin
-          </MDTypography>
-        ),
-        action: (
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Switch checked={isActive} onChange={handleToggle} color="primary" />
-            <MDTypography
-              variant="caption"
-              color={isActive ? "success" : "error"}
-              fontWeight="medium"
-            >
-              {isActive ? t("active") : t("inactive")}
-            </MDTypography>
-          </div>
-        ),
-      },
-      {
-        author: <Author image={team4} name="Laurent Perrier" email="Laurent@creative-tim.com" />,
-        email: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            Laurent@creative-tim.com
-          </MDTypography>
-        ),
-        status: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            Admin
-          </MDTypography>
-        ),
-        action: (
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Switch checked={isActive} onChange={handleToggle} color="primary" />
-            <MDTypography
-              variant="caption"
-              color={isActive ? "success" : "error"}
-              fontWeight="medium"
-            >
-              {isActive ? t("active") : t("inactive")}
-            </MDTypography>
-          </div>
-        ),
-      },
-      {
-        author: <Author image={team3} name="Michael Levi" email="Michael@creative-tim.com" />,
-        email: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            Michael@creative-tim.com
-          </MDTypography>
-        ),
-        status: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            Admin
-          </MDTypography>
-        ),
-        action: (
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Switch checked={isActive} onChange={handleToggle} color="primary" />
-            <MDTypography
-              variant="caption"
-              color={isActive ? "success" : "error"}
-              fontWeight="medium"
-            >
-              {isActive ? t("active") : t("inactive")}
-            </MDTypography>
-          </div>
-        ),
-      },
-      {
-        author: <Author image={team3} name="Richard Gran" email="Richard@creative-tim.com" />,
-        email: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            Richard@creative-tim.com
-          </MDTypography>
-        ),
-        status: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            Admin
-          </MDTypography>
-        ),
-        action: (
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Switch checked={isActive} onChange={handleToggle} color="primary" />
-            <MDTypography
-              variant="caption"
-              color={isActive ? "success" : "error"}
-              fontWeight="medium"
-            >
-              {isActive ? t("active") : t("inactive")}
-            </MDTypography>
-          </div>
-        ),
-      },
-      {
-        author: <Author image={team4} name="Miriam Eric" email="Miriam@creative-tim.com" />,
-        email: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            Miriam@creative-tim.com
-          </MDTypography>
-        ),
-        status: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            Admin
-          </MDTypography>
-        ),
-        action: (
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Switch checked={isActive} onChange={handleToggle} color="primary" />
-            <MDTypography
-              variant="caption"
-              color={isActive ? "success" : "error"}
-              fontWeight="medium"
-            >
-              {isActive ? t("active") : t("inactive")}
-            </MDTypography>
-          </div>
-        ),
-      },
-    ],
+    rows,
+    totalPages,
+    snackbar,
+    handleCloseSnackbar,
   };
 }
