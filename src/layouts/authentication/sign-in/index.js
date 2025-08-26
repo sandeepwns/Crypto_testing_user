@@ -86,7 +86,7 @@ function Basic() {
 
       // 🔑 Token save
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.role || "User");
+      localStorage.setItem("role", res.data.user.role || "User");
 
       console.log("Login Success:", res.data);
 

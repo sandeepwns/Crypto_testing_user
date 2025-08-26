@@ -1,0 +1,9 @@
+{
+  "terminal.integrated.showStartup": false,
+  "terminal.integrated.defaultProfile.windows": null,
+  "terminal.integrated.startupCommands": "",
+  "terminal.external.windowsExec": "",
+  "terminal.explorerKind": "integrated",
+  "workbench.editor.tabSizing": "fit",
+  "workbench.editor.showTabs": "multiple"
+}

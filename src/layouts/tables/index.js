@@ -1,41 +1,30 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-
-// Material Dashboard 2 React components
+import Pagination from "@mui/material/Pagination";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-
-// Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
-
-// Data
-import authorsTableData from "layouts/tables/data/authorsTableData";
-import projectsTableData from "layouts/tables/data/projectsTableData";
+import useAuthorsTableData from "layouts/tables/data/authorsTableData";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import { Snackbar, Alert } from "@mui/material";
 
 function Tables() {
-  const { columns, rows } = authorsTableData();
-  const { columns: pColumns, rows: pRows } = projectsTableData();
   const { t } = useTranslation();
+  const [page, setPage] = useState(1);
+  const limit = 10; // 10 users per page
+
+  const { columns, rows, totalPages, snackbar, handleCloseSnackbar } = useAuthorsTableData(
+    page,
+    limit
+  );
+
+  const handleChangePage = (_, value) => {
+    setPage(value);
+  };
 
   return (
     <DashboardLayout>
@@ -58,6 +47,7 @@ function Tables() {
                   {t("userlist")}
                 </MDTypography>
               </MDBox>
+
               <MDBox pt={3}>
                 <DataTable
                   table={{ columns, rows }}
@@ -67,37 +57,32 @@ function Tables() {
                   noEndBorder
                 />
               </MDBox>
-            </Card>
-          </Grid>
-          {/* <Grid item xs={12}>
-            <Card>
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={3}
-                px={2}
-                variant="gradient"
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
-              >
-                <MDTypography variant="h6" color="white">
-                  Projects Table
-                </MDTypography>
-              </MDBox>
-              <MDBox pt={3}>
-                <DataTable
-                  table={{ columns: pColumns, rows: pRows }}
-                  isSorted={false}
-                  entriesPerPage={false}
-                  showTotalEntries={false}
-                  noEndBorder
+
+              <MDBox display="flex" justifyContent="center" p={2}>
+                <Pagination
+                  count={totalPages}
+                  page={page}
+                  onChange={handleChangePage}
+                  color="info"
                 />
               </MDBox>
             </Card>
-          </Grid> */}
+          </Grid>
         </Grid>
       </MDBox>
+
+      {/* Snackbar for success/error messages */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} variant="filled">
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+
       <Footer />
     </DashboardLayout>
   );
