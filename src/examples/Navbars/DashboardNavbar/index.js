@@ -54,6 +54,7 @@ import {
   setMiniSidenav,
   setOpenConfigurator,
 } from "context";
+import AccountMenu from "./accountMenu";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
@@ -142,11 +143,12 @@ function DashboardNavbar({ absolute, light, isMini }) {
               <MDInput label={t("SearchHere")} />
             </MDBox>
             <MDBox color={light ? "white" : "inherit"}>
-              <Link to="/authentication/sign-in/basic">
+              {/* <Link>
                 <IconButton sx={navbarIconButton} size="small" disableRipple>
                   <Icon sx={iconsStyle}>account_circle</Icon>
                 </IconButton>
-              </Link>
+              </Link> */}
+              <AccountMenu light={light} darkMode={darkMode} iconsStyle={iconsStyle} />
               <IconButton
                 size="small"
                 disableRipple

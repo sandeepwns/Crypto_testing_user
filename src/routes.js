@@ -46,6 +46,7 @@ import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import AdminSignIn from "layouts/authentication/sign-in/admin-sign-in/";
 import SignUp from "layouts/authentication/sign-up";
+import ProtectedRoute from "routes/protectedRoute";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
@@ -57,7 +58,11 @@ const routes = [
     key: "dashboard",
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard",
-    component: <Dashboard />,
+    component: (
+      <ProtectedRoute allowedRoles={["user"]}>
+        <Dashboard />
+      </ProtectedRoute>
+    ),
     allowedRoles: ["user"],
   },
   {
@@ -66,7 +71,11 @@ const routes = [
     key: "admindashboard",
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard/admin",
-    component: <AdminDashboard />,
+    component: (
+      <ProtectedRoute allowedRoles={["admin"]}>
+        <AdminDashboard />
+      </ProtectedRoute>
+    ),
     allowedRoles: ["admin"],
   },
   // {
@@ -83,7 +92,11 @@ const routes = [
     key: "apikey",
     icon: <Icon fontSize="small">key</Icon>,
     route: "/apikey",
-    component: <Billing />,
+    component: (
+      <ProtectedRoute allowedRoles={["user"]}>
+        <Billing />
+      </ProtectedRoute>
+    ),
     allowedRoles: ["user"],
   },
   {
@@ -92,7 +105,11 @@ const routes = [
     key: "userlist",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/tables",
-    component: <Tables />,
+    component: (
+      <ProtectedRoute allowedRoles={["admin"]}>
+        <Tables />
+      </ProtectedRoute>
+    ),
     allowedRoles: ["admin"],
   },
   // {
