@@ -42,4 +42,14 @@ export const adminLogin = async (credentials) => {
   return await api.post("/admin/login", credentials);
 };
 
+// Example: Get single user by ID
+export const getUserById = async (id) => {
+  return await api.get(`/users/${id}`);
+};
+
+// ✅ Update User API Keys
+export const updateApiKeys = async ({ publicKey, secretKey, id }) => {
+  return await api.put(`/users/update-keys/${id}`, { publicKey, secretKey });
+};
+
 export default api;

@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState, useEffect } from "react";
 
 // react-router components
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -33,10 +33,12 @@ import { useTranslation } from "react-i18next";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDInput from "components/MDInput";
+import { Switch, FormControl, FormLabel, Box, Typography } from "@mui/material";
 
 // Material Dashboard 2 React example components
 import Breadcrumbs from "examples/Breadcrumbs";
 import NotificationItem from "examples/Items/NotificationItem";
+import { Snackbar, Alert } from "@mui/material";
 
 // Custom styles for DashboardNavbar
 import {
@@ -55,14 +57,22 @@ import {
   setOpenConfigurator,
 } from "context";
 import AccountMenu from "./accountMenu";
+import { getUserById } from "services/api";
+import { useAuth } from "context/authContext";
 
 function DashboardNavbar({ absolute, light, isMini }) {
+  const { user } = useAuth();
   const [navbarType, setNavbarType] = useState();
+  const navigate = useNavigate();
   const { t } = useTranslation();
+  const [userData, setUser] = useState(null);
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
   const [openMenu, setOpenMenu] = useState(false);
+  const [autoTrading, setAutoTrading] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
   const route = useLocation().pathname.split("/").slice(1);
+  const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
   useEffect(() => {
     // Setting the navbar type
@@ -89,6 +99,36 @@ function DashboardNavbar({ absolute, light, isMini }) {
     // Remove event listener on cleanup
     return () => window.removeEventListener("scroll", handleTransparentNavbar);
   }, [dispatch, fixedNavbar]);
+  const savedUser = JSON.parse(localStorage.getItem("user"));
+
+  useEffect(() => {
+    getUserById(savedUser.id)
+      .then((res) => setUser(res.data.data))
+      .catch((err) => console.error("Error fetching user:", err));
+  }, [savedUser.id]);
+  const handleToggle = (event) => {
+    if (!userData?.publicKey || !userData?.secretKey) {
+      setSnackbar({
+        open: true,
+        message: "Please add your Public Key and Secret Key first",
+        severity: "error",
+      });
+      setAutoTrading(false); // toggle ko wapas OFF karo
+      setTimeout(() => {
+        navigate("/apikey");
+      }, 3000);
+
+      return;
+    }
+
+    setAutoTrading(event.target.checked);
+
+    setSnackbar({
+      open: true,
+      message: event.target.checked ? "Auto Trading Enabled" : "Auto Trading Disabled",
+      severity: "success",
+    });
+  };
 
   const handleMiniSidenav = () => setMiniSidenav(dispatch, !miniSidenav);
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
@@ -133,21 +173,179 @@ function DashboardNavbar({ absolute, light, isMini }) {
       color="inherit"
       sx={(theme) => navbar(theme, { transparentNavbar, absolute, light, darkMode })}
     >
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} variant="filled">
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+
       <Toolbar sx={(theme) => navbarContainer(theme)}>
         <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
           <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
         </MDBox>
         {isMini ? null : (
-          <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <MDBox pr={1}>
-              <MDInput label={t("SearchHere")} />
-            </MDBox>
-            <MDBox color={light ? "white" : "inherit"}>
-              {/* <Link>
-                <IconButton sx={navbarIconButton} size="small" disableRipple>
-                  <Icon sx={iconsStyle}>account_circle</Icon>
-                </IconButton>
-              </Link> */}
+          // <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
+          //   {/* <MDBox pr={1}>
+          //     <MDInput label={t("SearchHere")} />
+          //   </MDBox> */}
+          //   <FormControl component="fieldset" sx={{ display: "flex", alignItems: "center" }}>
+          //     {/* Label upar */}
+          //     <FormLabel component="legend" sx={{ mb: 1, fontSize: "14px", fontWeight: 600 }}>
+          //       Auto Trading
+          //     </FormLabel>
+
+          //     {/* Switch with Yes / No */}
+          //     <Box display="flex" alignItems="center" gap={1}>
+          //       {/* Left side - No */}
+          //       <Typography
+          //         variant="body2"
+          //         sx={{ fontSize: "14px", fontWeight: !autoTrading ? 600 : 400 }}
+          //         color={autoTrading ? "text.secondary" : "primary"}
+          //       >
+          //         No
+          //       </Typography>
+
+          //       {/* Toggle Switch - small size */}
+          //       <Switch
+          //         checked={autoTrading}
+          //         onChange={handleToggle}
+          //         color="primary"
+          //         size="small"
+          //       />
+
+          //       {/* Right side - Yes */}
+          //       <Typography
+          //         variant="body2"
+          //         sx={{ fontSize: "14px", fontWeight: autoTrading ? 600 : 400 }}
+          //         color={autoTrading ? "primary" : "text.secondary"}
+          //       >
+          //         Yes
+          //       </Typography>
+          //     </Box>
+          //   </FormControl>
+          //   <MDBox
+          //     display="flex"
+          //     alignItems="center"
+          //     justifyContent="center"
+          //     gap={1}
+          //     color={light ? "white" : "inherit"}
+          //   >
+          //     {/* <Link>
+          //       <IconButton sx={navbarIconButton} size="small" disableRipple>
+          //         <Icon sx={iconsStyle}>account_circle</Icon>
+          //       </IconButton>
+          //     </Link> */}
+          //     <AccountMenu light={light} darkMode={darkMode} iconsStyle={iconsStyle} />
+          //     <IconButton
+          //       size="small"
+          //       disableRipple
+          //       color="inherit"
+          //       sx={navbarMobileMenu}
+          //       onClick={handleMiniSidenav}
+          //     >
+          //       <Icon sx={iconsStyle} fontSize="medium">
+          //         {miniSidenav ? "menu_open" : "menu"}
+          //       </Icon>
+          //     </IconButton>
+          //     <LanguageSwitcher />
+          //     {/* <IconButton
+          //       size="small"
+          //       disableRipple
+          //       color="inherit"
+          //       sx={navbarIconButton}
+          //       onClick={handleConfiguratorOpen}
+          //     >
+          //       <Icon sx={iconsStyle}>settings</Icon>
+          //     </IconButton> */}
+          //     <IconButton
+          //       size="small"
+          //       disableRipple
+          //       color="inherit"
+          //       sx={navbarIconButton}
+          //       aria-controls="notification-menu"
+          //       aria-haspopup="true"
+          //       variant="contained"
+          //       onClick={handleOpenMenu}
+          //     >
+          //       <Icon sx={iconsStyle}>notifications</Icon>
+          //     </IconButton>
+          //     {renderMenu()}
+          //   </MDBox>
+          // </MDBox>
+          <MDBox
+            sx={(theme) => navbarRow(theme, { isMini })}
+            display="flex"
+            alignItems="center"
+            gap={2}
+          >
+            {/* Auto Trading Toggle */}
+            <FormControl
+              component="fieldset"
+              sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+            >
+              {/* Label upar chhota */}
+              <FormLabel
+                component="legend"
+                sx={{
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  textAlign: "center",
+                  lineHeight: 1,
+                  color: "#9ea2b5 !important", // force fixed color
+                  "&.Mui-focused": {
+                    color: "#9ea2b5 !important", // focus hone par bhi same rahe
+                  },
+                }}
+              >
+                Auto Trading
+              </FormLabel>
+
+              {/* Switch with Yes / No */}
+              <Box display="flex" alignItems="center" gap={0.5} mt={0.5}>
+                <Typography
+                  variant="body2"
+                  sx={{ fontSize: "12px", fontWeight: 500, color: "#9ea2b5" }}
+                >
+                  No
+                </Typography>
+
+                <Switch
+                  checked={autoTrading}
+                  onChange={handleToggle}
+                  color="primary"
+                  size="small"
+                  sx={{
+                    mt: "2px",
+                    "& .MuiSwitch-thumb": {
+                      width: 16,
+                      height: 16,
+                      marginTop: "2px",
+                    },
+                  }}
+                />
+
+                <Typography
+                  variant="body2"
+                  sx={{ fontSize: "12px", fontWeight: 500, color: "#9ea2b5" }}
+                >
+                  Yes
+                </Typography>
+              </Box>
+            </FormControl>
+
+            {/* Right side icons aligned center */}
+            <MDBox
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              gap={1}
+              color={light ? "white" : "inherit"}
+            >
               <AccountMenu light={light} darkMode={darkMode} iconsStyle={iconsStyle} />
               <IconButton
                 size="small"
@@ -161,15 +359,6 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 </Icon>
               </IconButton>
               <LanguageSwitcher />
-              <IconButton
-                size="small"
-                disableRipple
-                color="inherit"
-                sx={navbarIconButton}
-                onClick={handleConfiguratorOpen}
-              >
-                <Icon sx={iconsStyle}>settings</Icon>
-              </IconButton>
               <IconButton
                 size="small"
                 disableRipple
@@ -196,6 +385,7 @@ DashboardNavbar.defaultProps = {
   absolute: false,
   light: false,
   isMini: false,
+  user: null,
 };
 
 // Typechecking props for the DashboardNavbar
@@ -203,6 +393,11 @@ DashboardNavbar.propTypes = {
   absolute: PropTypes.bool,
   light: PropTypes.bool,
   isMini: PropTypes.bool,
+  user: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+    email: PropTypes.string,
+  }),
 };
 
 export default DashboardNavbar;

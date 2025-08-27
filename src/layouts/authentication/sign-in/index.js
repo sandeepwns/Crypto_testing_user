@@ -43,16 +43,20 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 import LanguageSwitcher from "examples/Navbars/Button";
 import { login } from "services/api";
+import { useAuth } from "context/authContext";
+import { Snackbar, Alert } from "@mui/material";
 
 function Basic() {
+  const { setUser } = useAuth();
   const [rememberMe, setRememberMe] = useState(false);
   const { t } = useTranslation();
-
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [serverError, setServerError] = useState("");
+  const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
   const navigate = useNavigate();
 
@@ -83,11 +87,11 @@ function Basic() {
 
     try {
       const res = await login({ email, password });
+      const role = res.data.user.role;
 
       if (res.data.user.status === "Inactive") {
         setServerError(t("InactiveMessage")); // ✅ t() se translation string milegi
         return; // login stop
-        const role = res.data.user.role;
       }
       // ❌ Agar role admin hai toh error message dikhao
       if (role !== "user") {
@@ -97,14 +101,28 @@ function Basic() {
 
       // 🔑 Token save
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      setUser(res.data.user);
       localStorage.setItem("role", res.data.user.role || "User");
 
       console.log("Login Success:", res.data);
+      setSnackbar({
+        open: true,
+        message: "Login Successfully",
+        severity: "success",
+      });
 
       // ✅ Navigate user
-      navigate("/dashboard");
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 3000);
     } catch (err) {
       console.log("error:", err);
+      setSnackbar({
+        open: true,
+        message: "Invalid email or password",
+        severity: "error",
+      });
       setServerError(err.response?.data?.message || "Invalid email or password");
     }
   };
@@ -115,6 +133,16 @@ function Basic() {
     <BasicLayout image={bgImage}>
       {/* <LanguageSwitcher/> */}
       <Card>
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} variant="filled">
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
         <MDBox
           variant="gradient"
           bgColor="info"

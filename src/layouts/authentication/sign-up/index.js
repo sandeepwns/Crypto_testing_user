@@ -19,6 +19,7 @@ import { Link, useNavigate } from "react-router-dom";
 // @mui material components
 import Card from "@mui/material/Card";
 import Checkbox from "@mui/material/Checkbox";
+import { Snackbar, Alert } from "@mui/material";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -46,6 +47,7 @@ function Cover() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [referralCode, setReferralCode] = useState("");
   const [agree, setAgree] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
   // 🔹 Error States
   const [nameError, setNameError] = useState("");
@@ -54,6 +56,7 @@ function Cover() {
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [serverError, setServerError] = useState("");
   const [referralCodeError, setReferralCodeError] = useState("");
+  const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
   // ✅ Handle Submit
   const handleSubmit = async (e) => {
@@ -104,10 +107,11 @@ function Cover() {
     if (!referralCode) {
       setReferralCodeError("Referral code is required"); // 👈 agar required hai
       isValid = false;
-    } else if (!/^[A-Za-z0-9]{6,}$/.test(referralCode)) {
-      setReferralCodeError("Referral code must be at least 6 characters and only letters/numbers");
-      isValid = false;
     }
+    // else if (!/^[A-Za-z0-9]{6,}$/.test(referralCode)) {
+    //   setReferralCodeError("Referral code must be at least 6 characters and only letters/numbers");
+    //   isValid = false;
+    // }
 
     // Terms & Conditions
     // if (!agree) {
@@ -122,10 +126,22 @@ function Cover() {
       const res = await signup({ name, email, password, confirmPassword, referralCode });
 
       console.log("Signup Success:", res.data);
+      setSnackbar({
+        open: true,
+        message: "Signup Success Please Login",
+        severity: "success",
+      });
 
       // Redirect to login after success
-      navigate("/authentication/sign-in");
+      setTimeout(() => {
+        navigate("/authentication/sign-in");
+      }, 3000);
     } catch (err) {
+      setSnackbar({
+        open: true,
+        message: "Signup failed. Try again.",
+        severity: "error",
+      });
       setServerError(err.response?.data?.message || "Signup failed. Try again.");
     }
   };
@@ -133,6 +149,16 @@ function Cover() {
   return (
     <CoverLayout image={bgImage}>
       <Card>
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} variant="filled">
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
         <MDBox
           variant="gradient"
           bgColor="info"
