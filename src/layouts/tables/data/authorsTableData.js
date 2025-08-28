@@ -90,7 +90,7 @@ export default function useAuthorsTableData(page, limit) {
     columns: [
       { Header: t("name"), accessor: "author", align: "left" },
       { Header: t("email"), accessor: "email", align: "left" },
-      { Header: t("Referred By"), accessor: "referredBy", align: "center" },
+      { Header: t("referredBy"), accessor: "referredBy", align: "center" },
       { Header: t("action"), accessor: "action", align: "center" },
     ],
     rows,

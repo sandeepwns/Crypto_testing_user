@@ -28,6 +28,7 @@ i18n
           active: "Active",
           inactive: "Inactive",
           rememberMe: "Remember me",
+          admin: " Admin",
           // Auth
           dreamGateSignIn: "Dream Gate Sign in",
           signupTitle: "Dream Gate Sign up",
@@ -55,6 +56,7 @@ i18n
           termsAndConditions: "이용 약관",
           alreadyHaveAccount: "이미 계정이 있으신가요?",
           iAgree: "동의합니다",
+          admin: " 관리자",
           dreamGateAdminSignIn: "드림 게이트 관리자 로그인",
 
           apikey: "API 키",

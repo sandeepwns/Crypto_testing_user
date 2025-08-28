@@ -34,6 +34,7 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
+import { Snackbar, Alert } from "@mui/material";
 
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
@@ -55,7 +56,9 @@ function Basic() {
   // 🔹 Error states
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
   const [serverError, setServerError] = useState("");
+  const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
   const handleSubmit = async (e) => {
@@ -105,17 +108,39 @@ function Basic() {
       // Save role
       localStorage.setItem("role", user.role);
       localStorage.setItem("token", token);
-
+      setSnackbar({
+        open: true,
+        message: "Login Successfully",
+        severity: "success",
+      });
       // ✅ Redirect admin
-      navigate("/dashboard/admin");
+
+      setTimeout(() => {
+        navigate("/dashboard/admin");
+      }, 3000);
     } catch (err) {
       console.log("Error :", err);
+      setSnackbar({
+        open: true,
+        message: "Invalid credentials. Try again.",
+        severity: "error",
+      });
       setServerError(err.response?.data?.message || "Invalid credentials. Try again.");
     }
   };
   return (
     <BasicLayout image={bgImage}>
       <Card>
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} variant="filled">
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
         <MDBox
           variant="gradient"
           bgColor="info"
