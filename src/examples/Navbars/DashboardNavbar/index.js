@@ -100,6 +100,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
     return () => window.removeEventListener("scroll", handleTransparentNavbar);
   }, [dispatch, fixedNavbar]);
   const savedUser = JSON.parse(localStorage.getItem("user"));
+  const role = localStorage.getItem("role");
 
   useEffect(() => {
     getUserById(savedUser.id)
@@ -284,59 +285,60 @@ function DashboardNavbar({ absolute, light, isMini }) {
             gap={2}
           >
             {/* Auto Trading Toggle */}
-            <FormControl
-              component="fieldset"
-              sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
-            >
-              {/* Label upar chhota */}
-              <FormLabel
-                component="legend"
-                sx={{
-                  fontSize: "12px",
-                  fontWeight: 600,
-                  textAlign: "center",
-                  lineHeight: 1,
-                  color: "#9ea2b5 !important", // force fixed color
-                  "&.Mui-focused": {
-                    color: "#9ea2b5 !important", // focus hone par bhi same rahe
-                  },
-                }}
+            {role === "user" && (
+              <FormControl
+                component="fieldset"
+                sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
               >
-                Auto Trading
-              </FormLabel>
-
-              {/* Switch with Yes / No */}
-              <Box display="flex" alignItems="center" gap={0.5} mt={0.5}>
-                <Typography
-                  variant="body2"
-                  sx={{ fontSize: "12px", fontWeight: 500, color: "#9ea2b5" }}
-                >
-                  No
-                </Typography>
-
-                <Switch
-                  checked={autoTrading}
-                  onChange={handleToggle}
-                  color="primary"
-                  size="small"
+                <FormLabel
+                  component="legend"
                   sx={{
-                    mt: "2px",
-                    "& .MuiSwitch-thumb": {
-                      width: 16,
-                      height: 16,
-                      marginTop: "2px",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    textAlign: "center",
+                    lineHeight: 1,
+                    color: "#9ea2b5 !important",
+                    "&.Mui-focused": {
+                      color: "#9ea2b5 !important",
                     },
                   }}
-                />
-
-                <Typography
-                  variant="body2"
-                  sx={{ fontSize: "12px", fontWeight: 500, color: "#9ea2b5" }}
                 >
-                  Yes
-                </Typography>
-              </Box>
-            </FormControl>
+                  Auto Trading
+                </FormLabel>
+
+                {/* Switch with Yes / No */}
+                <Box display="flex" alignItems="center" gap={0.5} mt={0.5}>
+                  <Typography
+                    variant="body2"
+                    sx={{ fontSize: "12px", fontWeight: 500, color: "#9ea2b5" }}
+                  >
+                    No
+                  </Typography>
+
+                  <Switch
+                    checked={autoTrading}
+                    onChange={handleToggle}
+                    color="primary"
+                    size="small"
+                    sx={{
+                      mt: "2px",
+                      "& .MuiSwitch-thumb": {
+                        width: 16,
+                        height: 16,
+                        marginTop: "2px",
+                      },
+                    }}
+                  />
+
+                  <Typography
+                    variant="body2"
+                    sx={{ fontSize: "12px", fontWeight: 500, color: "#9ea2b5" }}
+                  >
+                    Yes
+                  </Typography>
+                </Box>
+              </FormControl>
+            )}
 
             {/* Right side icons aligned center */}
             <MDBox
