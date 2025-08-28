@@ -373,7 +373,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
               >
                 <Icon sx={iconsStyle}>notifications</Icon>
               </IconButton>
-              {renderMenu()}
+              {/* {renderMenu()} */}
             </MDBox>
           </MDBox>
         )}

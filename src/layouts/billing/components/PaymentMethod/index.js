@@ -13,11 +13,12 @@ import { useTranslation } from "react-i18next";
 
 // Material Dashboard 2 React context
 import { useMaterialUIController } from "context";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Snackbar, Alert } from "@mui/material";
 import { useAuth } from "context/authContext";
 import { updateApiKeys } from "services/api";
 import { useNavigate } from "react-router-dom";
+import { getUserById } from "services/api";
 
 function PaymentMethod() {
   const [controller] = useMaterialUIController();
@@ -27,15 +28,26 @@ function PaymentMethod() {
   const navigate = useNavigate();
 
   // ✅ State for editable fields
-  const [publicKey, setPublicKey] = useState("SJHSDU");
+  const [publicKey, setPublicKey] = useState("");
+  const [userData, setUser] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
-  const [secretKey, setSecretKey] = useState("HDHEA");
+  const [secretKey, setSecretKey] = useState("");
   const [isEditingPublic, setIsEditingPublic] = useState(false);
   const [isEditingSecret, setIsEditingSecret] = useState(false);
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
   const savedUser = JSON.parse(localStorage.getItem("user"));
   const id = savedUser.id;
+
   const handleSave = async () => {
+    if (!publicKey.trim() || !secretKey.trim()) {
+      setSnackbar({
+        open: true,
+        message: "Public Key and Secret Key cannot be empty.",
+        severity: "error",
+      });
+      return; // 👈 आगे मत बढ़ो
+    }
+
     try {
       const res = await updateApiKeys({ publicKey, secretKey, id });
       console.log("✅ Keys updated:", res.data);
@@ -56,6 +68,27 @@ function PaymentMethod() {
       });
     }
   };
+
+  // Helper function to mask keys
+  const maskKey = (key) => {
+    if (!key || key.length === 0) {
+      return "**** **** **** ****"; // agar key hi nahi hai toh pure 16 *
+    }
+
+    const last4 = key.slice(-4); // last 4 characters
+    return "**** **** **** " + last4; // hamesha 12 * + space + last 4
+  };
+
+  useEffect(() => {
+    getUserById(savedUser.id)
+      .then((res) => {
+        const user = res.data.data;
+        setUser(user);
+        setPublicKey(user?.publicKey || "");
+        setSecretKey(user?.secretKey || "");
+      })
+      .catch((err) => console.error("Error fetching user:", err));
+  }, [savedUser.id]);
 
   return (
     <Card id="delete-account">
@@ -93,6 +126,7 @@ function PaymentMethod() {
                   `${borderWidth[1]} solid ${borderColor}`,
               }}
             >
+              {/* Public Key */}
               {isEditingPublic ? (
                 <TextField
                   fullWidth
@@ -102,9 +136,10 @@ function PaymentMethod() {
                 />
               ) : (
                 <MDTypography variant="h6" fontWeight="medium">
-                  **** **** **** {publicKey}
+                  {maskKey(publicKey)}
                 </MDTypography>
               )}
+
               <MDBox ml="auto" lineHeight={0} color={darkMode ? "white" : "dark"}>
                 <Tooltip title={isEditingPublic ? "Done" : "Edit Public Key"} placement="top">
                   <Icon
@@ -135,6 +170,7 @@ function PaymentMethod() {
                   `${borderWidth[1]} solid ${borderColor}`,
               }}
             >
+              {/* Secret Key */}
               {isEditingSecret ? (
                 <TextField
                   fullWidth
@@ -144,7 +180,7 @@ function PaymentMethod() {
                 />
               ) : (
                 <MDTypography variant="h6" fontWeight="medium">
-                  **** **** **** {secretKey}
+                  {maskKey(secretKey)}
                 </MDTypography>
               )}
               <MDBox ml="auto" lineHeight={0} color={darkMode ? "white" : "dark"}>
