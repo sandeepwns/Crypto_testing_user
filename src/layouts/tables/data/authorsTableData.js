@@ -65,7 +65,12 @@ export default function useAuthorsTableData(page, limit) {
     ),
     referredBy: (
       <MDTypography variant="caption" color="text" fontWeight="medium">
-        {"ADMIN123"}
+        {user.referredByCode ?? "-"}
+      </MDTypography>
+    ),
+    uId: (
+      <MDTypography variant="caption" color="text" fontWeight="medium">
+        {user.uid ?? "-"}
       </MDTypography>
     ),
     action: (
@@ -91,6 +96,7 @@ export default function useAuthorsTableData(page, limit) {
       { Header: t("name"), accessor: "author", align: "left" },
       { Header: t("email"), accessor: "email", align: "left" },
       { Header: t("referredBy"), accessor: "referredBy", align: "center" },
+      { Header: t("uid"), accessor: "uId", align: "center" },
       { Header: t("action"), accessor: "action", align: "center" },
     ],
     rows,

@@ -57,7 +57,7 @@ import {
   setOpenConfigurator,
 } from "context";
 import AccountMenu from "./accountMenu";
-import { getUserById } from "services/api";
+import { getUserById, updateAutoTrading } from "services/api";
 import { useAuth } from "context/authContext";
 
 function DashboardNavbar({ absolute, light, isMini }) {
@@ -104,10 +104,21 @@ function DashboardNavbar({ absolute, light, isMini }) {
 
   useEffect(() => {
     getUserById(savedUser.id)
-      .then((res) => setUser(res.data.data))
+      .then((res) => {
+        const data = res.data.data;
+        setUser(data);
+
+        // Agar publicKey aur secretKey dono exist karte hain
+        if (data?.autoTrading) {
+          setAutoTrading(true);
+        }
+      })
       .catch((err) => console.error("Error fetching user:", err));
   }, [savedUser.id]);
-  const handleToggle = (event) => {
+
+  const handleToggle = async (event) => {
+    const checked = event.target.checked;
+
     if (!userData?.publicKey || !userData?.secretKey) {
       setSnackbar({
         open: true,
@@ -122,13 +133,26 @@ function DashboardNavbar({ absolute, light, isMini }) {
       return;
     }
 
-    setAutoTrading(event.target.checked);
+    try {
+      // API call to update autoTrading in backend
+      await updateAutoTrading(userData._id, checked);
 
-    setSnackbar({
-      open: true,
-      message: event.target.checked ? "Auto Trading Enabled" : "Auto Trading Disabled",
-      severity: "success",
-    });
+      // If API call successful, update local state
+      setAutoTrading(checked);
+
+      setSnackbar({
+        open: true,
+        message: checked ? "Auto Trading Enabled" : "Auto Trading Disabled",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("AutoTrading update failed:", error);
+      setSnackbar({
+        open: true,
+        message: "Failed to update Auto Trading",
+        severity: "error",
+      });
+    }
   };
 
   const handleMiniSidenav = () => setMiniSidenav(dispatch, !miniSidenav);

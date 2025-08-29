@@ -21,6 +21,9 @@ import { Link, useNavigate } from "react-router-dom";
 // @mui material components
 import Card from "@mui/material/Card";
 import Switch from "@mui/material/Switch";
+import { IconEye, IconEyeOff } from "@tabler/icons-react";
+import { IconButton, InputAdornment } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
 import Grid from "@mui/material/Grid";
 import MuiLink from "@mui/material/Link";
 
@@ -52,9 +55,11 @@ function Basic() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // 🔹 Error states
   const [emailError, setEmailError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
   const [serverError, setServerError] = useState("");
@@ -88,9 +93,11 @@ function Basic() {
 
     try {
       // 🔹 API Call
+      setLoading(true);
       const res = await adminLogin({ email, password });
 
-      const { token, user } = res.data;
+      const { token, user, code } = res.data;
+      console.log(res.data);
 
       // ❌ Agar user admin nahi hai toh error dikhado
       if (user.role !== "admin") {
@@ -108,6 +115,8 @@ function Basic() {
       // Save role
       localStorage.setItem("role", user.role);
       localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("referralCode", code);
       setSnackbar({
         open: true,
         message: "Login Successfully",
@@ -117,7 +126,7 @@ function Basic() {
 
       setTimeout(() => {
         navigate("/dashboard/admin");
-      }, 3000);
+      }, 2000);
     } catch (err) {
       console.log("Error :", err);
       setSnackbar({
@@ -126,6 +135,8 @@ function Basic() {
         severity: "error",
       });
       setServerError(err.response?.data?.message || "Invalid credentials. Try again.");
+    } finally {
+      setLoading(false); // 👈 Loader stop
     }
   };
   return (
@@ -173,10 +184,19 @@ function Basic() {
             </MDBox>
             <MDBox mb={2}>
               <MDInput
-                type="password"
+                type={showPassword ? "text" : "password"}
                 label={t("password")}
                 fullWidth
                 onChange={(e) => setPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                        {showPassword ? <IconEyeOff stroke={1.25} /> : <IconEye stroke={1.25} />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
               {passwordError && (
                 <MDTypography variant="caption" color="error">
@@ -204,8 +224,8 @@ function Basic() {
             )}
 
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth type="submit">
-                {t("signIn")}
+              <MDButton variant="gradient" color="info" fullWidth type="submit" disabled={loading}>
+                {loading ? <CircularProgress size={24} color="inherit" /> : t("signIn")}
               </MDButton>
             </MDBox>
           </MDBox>
