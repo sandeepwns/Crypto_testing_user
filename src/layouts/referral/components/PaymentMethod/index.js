@@ -4,6 +4,7 @@ import Grid from "@mui/material/Grid";
 import Icon from "@mui/material/Icon";
 import Tooltip from "@mui/material/Tooltip";
 import TextField from "@mui/material/TextField";
+import CircularProgress from "@mui/material/CircularProgress";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -29,6 +30,7 @@ function ReferralCode() {
   // ✅ State
   const [referralCode, setReferralCode] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false); // 👈 loader state
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
@@ -49,6 +51,7 @@ function ReferralCode() {
       });
       return;
     }
+    setLoading(true);
 
     try {
       // ✅ Backend API call
@@ -72,6 +75,8 @@ function ReferralCode() {
         message: "Failed to save Referral Code. Please try again.",
         severity: "error",
       });
+    } finally {
+      setLoading(false); // ✅ stop loader
     }
   };
 
@@ -90,7 +95,7 @@ function ReferralCode() {
 
       <MDBox pt={2} px={2} display="flex" justifyContent="space-between" alignItems="center">
         <MDTypography variant="h6" fontWeight="medium">
-          {t("Referral Code")}
+          {t("referralcode")}
         </MDTypography>
       </MDBox>
 
@@ -99,7 +104,7 @@ function ReferralCode() {
           {/* Referral Code */}
           <Grid item xs={12} md={6}>
             <MDTypography variant="subtitle2" color="textSecondary" gutterBottom>
-              {t("Your Referral Code")}
+              {t("yourReferralCode")}
             </MDTypography>
             <MDBox
               borderRadius="lg"
@@ -141,8 +146,14 @@ function ReferralCode() {
 
           {/* Save Button */}
           <Grid item xs={12} display="flex" justifyContent="flex-end">
-            <MDButton variant="contained" color="info" onClick={handleSave}>
-              {t("save")}
+            <MDButton
+              variant="contained"
+              color="info"
+              onClick={handleSave}
+              disabled={loading} // disable while loading
+              startIcon={loading && <CircularProgress size={20} color="inherit" />} // ✅ loader
+            >
+              {loading ? t("saving") : t("save")}
             </MDButton>
           </Grid>
         </Grid>

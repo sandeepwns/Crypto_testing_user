@@ -22,10 +22,9 @@ const AccountMenu = ({ light, darkMode, iconsStyle }) => {
   };
 
   const handleLogout = () => {
-    const role = localStorage.getItem("role"); // pehle role le lo
+    const role = localStorage.getItem("role"); // save role before clearing everything
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
+    localStorage.clear(); // ✅ removes ALL keys from localStorage
     handleCloseMenu();
 
     if (role === "admin") {

@@ -117,7 +117,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Referral Code",
+    name: "referralcode",
     key: "referralcode",
     icon: <Icon fontSize="small">card_giftcard</Icon>,
     route: "/referralcode",

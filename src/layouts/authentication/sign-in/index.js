@@ -23,6 +23,9 @@ import Card from "@mui/material/Card";
 import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Grid";
 import MuiLink from "@mui/material/Link";
+import { IconEye, IconEyeOff } from "@tabler/icons-react";
+import CircularProgress from "@mui/material/CircularProgress";
+import { IconButton, InputAdornment } from "@mui/material";
 
 // @mui icons
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -49,12 +52,14 @@ import { Snackbar, Alert } from "@mui/material";
 function Basic() {
   const { setUser } = useAuth();
   const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState("");
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
@@ -86,6 +91,7 @@ function Basic() {
     if (!isValid) return;
 
     try {
+      setLoading(true); // 👈 Loader start
       const res = await login({ email, password });
       const role = res.data.user.role;
 
@@ -115,7 +121,7 @@ function Basic() {
       // ✅ Navigate user
       setTimeout(() => {
         navigate("/dashboard");
-      }, 3000);
+      }, 2000);
     } catch (err) {
       console.log("error:", err);
       setSnackbar({
@@ -124,6 +130,8 @@ function Basic() {
         severity: "error",
       });
       setServerError(err.response?.data?.message || "Invalid email or password");
+    } finally {
+      setLoading(false); // 👈 Loader stop
     }
   };
 
@@ -176,11 +184,19 @@ function Basic() {
             </MDBox>
             <MDBox mb={2}>
               <MDInput
-                type="password"
+                type={showPassword ? "text" : "password"}
                 label={t("password")}
                 fullWidth
                 onChange={(e) => setPassword(e.target.value)}
-                // required
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                        {showPassword ? <IconEyeOff stroke={1.25} /> : <IconEye stroke={1.25} />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
               {passwordError && (
                 <MDTypography variant="caption" color="error">
@@ -206,8 +222,8 @@ function Basic() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth type="submit">
-                {t("signIn")}
+              <MDButton variant="gradient" color="info" fullWidth type="submit" disabled={loading}>
+                {loading ? <CircularProgress size={24} color="inherit" /> : t("signIn")}
               </MDButton>
             </MDBox>
             <MDBox mt={3} mb={1} textAlign="center">

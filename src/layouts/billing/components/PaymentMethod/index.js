@@ -4,6 +4,7 @@ import Grid from "@mui/material/Grid";
 import Icon from "@mui/material/Icon";
 import Tooltip from "@mui/material/Tooltip";
 import TextField from "@mui/material/TextField";
+import CircularProgress from "@mui/material/CircularProgress"; // 👈 Loader
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -34,6 +35,7 @@ function PaymentMethod() {
   const [secretKey, setSecretKey] = useState("");
   const [isEditingPublic, setIsEditingPublic] = useState(false);
   const [isEditingSecret, setIsEditingSecret] = useState(false);
+  const [loading, setLoading] = useState(false); // 👈 Loader state
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
   const savedUser = JSON.parse(localStorage.getItem("user"));
   const id = savedUser.id;
@@ -49,6 +51,7 @@ function PaymentMethod() {
     }
 
     try {
+      setLoading(true);
       const res = await updateApiKeys({ publicKey, secretKey, id });
       console.log("✅ Keys updated:", res.data);
       setSnackbar({
@@ -66,6 +69,8 @@ function PaymentMethod() {
         message: "Failed to update API keys. Please try again.",
         severity: "error",
       });
+    } finally {
+      setLoading(false); // 🔹 Loader stop
     }
   };
 
@@ -199,8 +204,8 @@ function PaymentMethod() {
 
           {/* Save Button */}
           <Grid item xs={12} display="flex" justifyContent="flex-end">
-            <MDButton variant="contained" color="info" onClick={handleSave}>
-              {t("save")}
+            <MDButton variant="contained" color="info" onClick={handleSave} disabled={loading}>
+              {loading ? <CircularProgress size={24} color="inherit" /> : t("save")}
             </MDButton>
           </Grid>
         </Grid>

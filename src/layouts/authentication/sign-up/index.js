@@ -15,6 +15,7 @@ Coded by www.creative-tim.com
 
 // react-router-dom components
 import { Link, useNavigate } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -26,6 +27,8 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
+import { IconEye, IconEyeOff } from "@tabler/icons-react";
+import { IconButton, InputAdornment } from "@mui/material";
 
 // Authentication layout components
 import CoverLayout from "layouts/authentication/components/CoverLayout";
@@ -45,6 +48,10 @@ function Cover() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const [uid, setUid] = useState("");
+  const [uidError, setUidError] = useState("");
   const [referralCode, setReferralCode] = useState("");
   const [agree, setAgree] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
@@ -56,6 +63,10 @@ function Cover() {
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [serverError, setServerError] = useState("");
   const [referralCodeError, setReferralCodeError] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
   // ✅ Handle Submit
@@ -67,6 +78,8 @@ function Cover() {
     setEmailError("");
     setPasswordError("");
     setConfirmPasswordError("");
+    setReferralCodeError("");
+    setUidError("");
     setServerError("");
 
     let isValid = true;
@@ -108,6 +121,12 @@ function Cover() {
       setReferralCodeError("Referral code is required"); // 👈 agar required hai
       isValid = false;
     }
+
+    // UID Validation
+    if (!uid.trim()) {
+      setUidError("UID is required");
+      isValid = false;
+    }
     // else if (!/^[A-Za-z0-9]{6,}$/.test(referralCode)) {
     //   setReferralCodeError("Referral code must be at least 6 characters and only letters/numbers");
     //   isValid = false;
@@ -123,7 +142,8 @@ function Cover() {
 
     // 🔹 API Call
     try {
-      const res = await signup({ name, email, password, confirmPassword, referralCode });
+      setLoading(true);
+      const res = await signup({ name, email, password, confirmPassword, referralCode, uid });
 
       console.log("Signup Success:", res.data);
       setSnackbar({
@@ -135,7 +155,7 @@ function Cover() {
       // Redirect to login after success
       setTimeout(() => {
         navigate("/authentication/sign-in");
-      }, 3000);
+      }, 2000);
     } catch (err) {
       setSnackbar({
         open: true,
@@ -143,6 +163,8 @@ function Cover() {
         severity: "error",
       });
       setServerError(err.response?.data?.message || "Signup failed. Try again.");
+    } finally {
+      setLoading(false); // 🔹 Stop loader
     }
   };
 
@@ -206,11 +228,20 @@ function Cover() {
             </MDBox>
             <MDBox mb={2}>
               <MDInput
-                type="password"
+                type={showPassword ? "text" : "password"}
                 label={t("password")}
                 variant="standard"
                 fullWidth
                 onChange={(e) => setPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                        {showPassword ? <IconEyeOff stroke={1.25} /> : <IconEye stroke={1.25} />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
               {passwordError && (
                 <MDTypography variant="caption" color="error">
@@ -220,11 +251,27 @@ function Cover() {
             </MDBox>
             <MDBox mb={2}>
               <MDInput
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 label={t("confirmPassword")}
                 variant="standard"
                 fullWidth
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        edge="end"
+                      >
+                        {showConfirmPassword ? (
+                          <IconEyeOff stroke={1.25} />
+                        ) : (
+                          <IconEye stroke={1.25} />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
               {confirmPasswordError && (
                 <MDTypography variant="caption" color="error">
@@ -235,7 +282,7 @@ function Cover() {
             <MDBox mb={2}>
               <MDInput
                 type="text"
-                label={t("referralCode")}
+                label={t("referralcode")}
                 variant="standard"
                 fullWidth
                 onChange={(e) => setReferralCode(e.target.value)}
@@ -246,6 +293,21 @@ function Cover() {
                 </MDTypography>
               )}
             </MDBox>
+            <MDBox mb={2}>
+              <MDInput
+                type="text"
+                label={t("UID")}
+                variant="standard"
+                fullWidth
+                onChange={(e) => setUid(e.target.value)}
+              />
+              {uidError && (
+                <MDTypography variant="caption" color="error">
+                  {uidError}
+                </MDTypography>
+              )}
+            </MDBox>
+
             {/* <MDBox display="flex" alignItems="center" ml={-1}>
               <Checkbox checked={agree} onChange={(e) => setAgree(e.target.checked)} />
               <MDTypography
@@ -281,8 +343,14 @@ function Cover() {
               </MDTypography>
             )}
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth type="submit">
-                {t("signUp")}
+              <MDButton
+                variant="gradient"
+                color="info"
+                fullWidth
+                type="submit"
+                disabled={loading} // 👈 loader ke time button disable
+              >
+                {loading ? <CircularProgress size={24} color="inherit" /> : t("signUp")}
               </MDButton>
             </MDBox>
             <MDBox mt={3} mb={1} textAlign="center">

@@ -327,7 +327,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                     },
                   }}
                 >
-                  Auto Trading
+                  {t("autoTrading")}
                 </FormLabel>
 
                 {/* Switch with Yes / No */}
@@ -336,7 +336,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                     variant="body2"
                     sx={{ fontSize: "12px", fontWeight: 500, color: "#9ea2b5" }}
                   >
-                    No
+                    {t("off")}
                   </Typography>
 
                   <Switch
@@ -358,7 +358,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                     variant="body2"
                     sx={{ fontSize: "12px", fontWeight: 500, color: "#9ea2b5" }}
                   >
-                    Yes
+                    {t("on")}
                   </Typography>
                 </Box>
               </FormControl>
