@@ -42,6 +42,10 @@ export const adminLogin = async (credentials) => {
   return await api.post("/admin/login", credentials);
 };
 
+export const updateReferralCode = async (code) => {
+  return await api.put("/admin/referellcode_update", { code });
+};
+
 // Example: Get single user by ID
 export const getUserById = async (id) => {
   return await api.get(`/users/${id}`);
@@ -51,5 +55,8 @@ export const getUserById = async (id) => {
 export const updateApiKeys = async ({ publicKey, secretKey, id }) => {
   return await api.put(`/users/update-keys/${id}`, { publicKey, secretKey });
 };
+
+export const updateAutoTrading = (id, autoTrading) =>
+  api.patch(`/users/user-autotrading/${id}`, { autoTrading }); // autoTrading = true or false
 
 export default api;

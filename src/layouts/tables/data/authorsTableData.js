@@ -65,7 +65,7 @@ export default function useAuthorsTableData(page, limit) {
     ),
     referredBy: (
       <MDTypography variant="caption" color="text" fontWeight="medium">
-        {"ADMIN123"}
+        {user.referredByCode ?? "-"}
       </MDTypography>
     ),
     action: (

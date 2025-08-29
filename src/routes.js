@@ -40,6 +40,7 @@ import Dashboard from "layouts/dashboard";
 import AdminDashboard from "layouts/dashboard/admin-dashboard";
 import Tables from "layouts/tables";
 import Billing from "layouts/billing";
+import Referral from "layouts/referral";
 import RTL from "layouts/rtl";
 import Notifications from "layouts/notifications";
 import Profile from "layouts/profile";
@@ -108,6 +109,19 @@ const routes = [
     component: (
       <ProtectedRoute allowedRoles={["admin"]}>
         <Tables />
+      </ProtectedRoute>
+    ),
+    allowedRoles: ["admin"],
+  },
+  {
+    type: "collapse",
+    name: "Referral Code",
+    key: "referralcode",
+    icon: <Icon fontSize="small">card_giftcard</Icon>,
+    route: "/referralcode",
+    component: (
+      <ProtectedRoute allowedRoles={["admin"]}>
+        <Referral />
       </ProtectedRoute>
     ),
     allowedRoles: ["admin"],

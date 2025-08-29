@@ -90,7 +90,8 @@ function Basic() {
       // 🔹 API Call
       const res = await adminLogin({ email, password });
 
-      const { token, user } = res.data;
+      const { token, user, code } = res.data;
+      console.log(res.data);
 
       // ❌ Agar user admin nahi hai toh error dikhado
       if (user.role !== "admin") {
@@ -108,6 +109,8 @@ function Basic() {
       // Save role
       localStorage.setItem("role", user.role);
       localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("referralCode", code);
       setSnackbar({
         open: true,
         message: "Login Successfully",
