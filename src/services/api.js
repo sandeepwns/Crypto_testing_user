@@ -59,4 +59,14 @@ export const updateApiKeys = async ({ publicKey, secretKey, id }) => {
 export const updateAutoTrading = (id, autoTrading) =>
   api.patch(`/users/user-autotrading/${id}`, { autoTrading }); // autoTrading = true or false
 
+// ✅ Update Profile
+export const updateProfile = async (id, { name, email }) => {
+  return await api.put(`/users/${id}/update-profile`, { name, email });
+};
+
+// ✅ Change Password
+export const changePassword = async (id, { oldPassword, newPassword }) => {
+  return await api.put(`/users/${id}/change-password`, { oldPassword, newPassword });
+};
+
 export default api;

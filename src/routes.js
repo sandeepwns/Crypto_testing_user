@@ -41,6 +41,8 @@ import AdminDashboard from "layouts/dashboard/admin-dashboard";
 import Tables from "layouts/tables";
 import Billing from "layouts/billing";
 import Referral from "layouts/referral";
+import UpdateProfile from "layouts/update_profile";
+import ChangePassword from "layouts/change_password";
 import RTL from "layouts/rtl";
 import Notifications from "layouts/notifications";
 import Profile from "layouts/profile";
@@ -126,54 +128,26 @@ const routes = [
     ),
     allowedRoles: ["admin"],
   },
-  // {
-  //   type: "collapse",
-  //   name: "RTL",
-  //   key: "rtl",
-  //   icon: <Icon fontSize="small">format_textdirection_r_to_l</Icon>,
-  //   route: "/rtl",
-  //   component: <RTL />,
-  // },
-  // {
-  //   type: "collapse",
-  //   name: "Notifications",
-  //   key: "notifications",
-  //   icon: <Icon fontSize="small">notifications</Icon>,
-  //   route: "/notifications",
-  //   component: <Notifications />,
-  // },
-  // {
-  //   type: "collapse",
-  //   name: "Profile",
-  //   key: "profile",
-  //   icon: <Icon fontSize="small">person</Icon>,
-  //   route: "/profile",
-  //   component: <Profile />,
-  // },
-  // {
-  //   type: "collapse",
-  //   name: "",
-  //   key: "sign-in",
-  //   icon: "",
-  //   route: "/authentication/sign-in",
-  //   component: <SignIn />,
-  // },
-  // {
-  //   type: "collapse",
-  //   name: "",
-  //   key: "sign-in",
-  //   icon: "",
-  //   route: "/authentication/sign-in/admin",
-  //   component: <AdminSignIn />,
-  // },
-  // {
-  //   type: "collapse",
-  //   name: "",
-  //   key: "sign-up",
-  //   icon: "",
-  //   route: "/authentication/sign-up",
-  //   component: <SignUp />,
-  // },
+  {
+    key: "update-profile",
+    route: "/update-profile",
+    component: (
+      <ProtectedRoute allowedRoles={["admin", "user"]}>
+        <UpdateProfile />
+      </ProtectedRoute>
+    ),
+    allowedRoles: ["admin", "user"],
+  },
+  {
+    key: "change-password",
+    route: "/change-password",
+    component: (
+      <ProtectedRoute allowedRoles={["admin", "user"]}>
+        <ChangePassword />
+      </ProtectedRoute>
+    ),
+    allowedRoles: ["admin", "user"],
+  },
   {
     key: "sign-in",
     route: "/authentication/sign-in",
