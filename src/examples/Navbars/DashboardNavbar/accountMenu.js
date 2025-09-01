@@ -72,11 +72,29 @@ const AccountMenu = ({ light, darkMode, iconsStyle }) => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem component={Link} onClick={handleCloseMenu} sx={{ borderRadius: "8px" }}>
+        <MenuItem
+          onClick={() => {
+            handleCloseMenu();
+            navigate("/updateProfile"); // 👈 Profile page open karega
+          }}
+          sx={{ borderRadius: "8px" }}
+        >
           <Icon fontSize="small" sx={{ mr: 1 }}>
             person
           </Icon>
           {t("profile")}
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleCloseMenu();
+            navigate("/changePassword");
+          }}
+          sx={{ borderRadius: "8px" }}
+        >
+          <Icon fontSize="small" sx={{ mr: 1 }}>
+            lock
+          </Icon>
+          {t("changePassword")}
         </MenuItem>
 
         <MenuItem onClick={handleLogout} sx={{ borderRadius: "8px", color: "error.main" }}>

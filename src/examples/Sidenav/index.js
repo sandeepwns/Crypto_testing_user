@@ -20,6 +20,7 @@ import { useLocation, NavLink } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
+import logo from "assets/images/Dream-logo.jpeg";
 
 // @mui material components
 import List from "@mui/material/List";
@@ -119,7 +120,11 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         </Link>
       ) : (
         <NavLink key={key} to={route}>
-          <SidenavCollapse name={t(name)} icon={icon} active={route === location.pathname} />
+          <SidenavCollapse
+            name={t(name)}
+            icon={icon}
+            active={route === location.pathname || location.pathname.startsWith(route)}
+          />
         </NavLink>
       );
     } else if (type === "title") {
@@ -176,7 +181,15 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           </MDTypography>
         </MDBox>
         <MDBox component={NavLink} display="flex" alignItems="center">
-          {brand && <MDBox component="img" src={brand} alt="Brand" width="2rem" />}
+          {brand && (
+            <MDBox
+              component="img"
+              src={logo}
+              alt="Brand"
+              style={{ borderRadius: "8px" }}
+              width="2rem"
+            />
+          )}
           <MDBox
             width={!brandName && "100%"}
             sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}

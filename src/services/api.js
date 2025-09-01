@@ -69,4 +69,18 @@ export const changePassword = async (id, { oldPassword, newPassword }) => {
   return await api.put(`/users/${id}/change-password`, { oldPassword, newPassword });
 };
 
+// ✅ Get User Futures Balance (New)
+export const getUserBalance = async (id) => {
+  return await api.get(`/position/${id}/balance`);
+};
+
+// ✅ Get User Futures Balance (New)
+export const getOpenPosition = async (id) => {
+  return await api.get(`/position/${id}/positions`);
+};
+
+// ✅ Get User Futures Balance (New)
+export const getUsersCount = async () => {
+  return await api.get("/users/stats");
+};
 export default api;

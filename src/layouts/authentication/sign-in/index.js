@@ -26,6 +26,7 @@ import MuiLink from "@mui/material/Link";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { IconButton, InputAdornment } from "@mui/material";
+import logo from "assets/images/Dream-logo.jpeg";
 
 // @mui icons
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -162,6 +163,10 @@ function Basic() {
           mb={1}
           textAlign="center"
         >
+          {/* 🔹 Logo */}
+          <MDBox display="flex" justifyContent="center" mb={1}>
+            <img src={logo} alt="DreamGate Logo" style={{ height: "50px", borderRadius: "8px" }} />
+          </MDBox>
           <MDTypography variant="h5" fontWeight="medium" color="white" mt={1}>
             {t("dreamGateSignIn")}
           </MDTypography>

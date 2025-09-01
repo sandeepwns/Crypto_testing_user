@@ -41,6 +41,7 @@ import AdminDashboard from "layouts/dashboard/admin-dashboard";
 import Tables from "layouts/tables";
 import Billing from "layouts/billing";
 import Referral from "layouts/referral";
+import Position from "layouts/openPosition";
 import UpdateProfile from "layouts/update_profile";
 import ChangePassword from "layouts/change_password";
 import RTL from "layouts/rtl";
@@ -104,6 +105,19 @@ const routes = [
   },
   {
     type: "collapse",
+    name: "openPosition",
+    key: "openPosition",
+    icon: <Icon fontSize="small">show_chart</Icon>,
+    route: "/openPosition",
+    component: (
+      <ProtectedRoute allowedRoles={["user"]}>
+        <Position />
+      </ProtectedRoute>
+    ),
+    allowedRoles: ["user"],
+  },
+  {
+    type: "collapse",
     name: "userlist",
     key: "userlist",
     icon: <Icon fontSize="small">table_view</Icon>,
@@ -130,7 +144,7 @@ const routes = [
   },
   {
     key: "update-profile",
-    route: "/update-profile",
+    route: "/updateProfile",
     component: (
       <ProtectedRoute allowedRoles={["admin", "user"]}>
         <UpdateProfile />
@@ -140,7 +154,7 @@ const routes = [
   },
   {
     key: "change-password",
-    route: "/change-password",
+    route: "/changePassword",
     component: (
       <ProtectedRoute allowedRoles={["admin", "user"]}>
         <ChangePassword />

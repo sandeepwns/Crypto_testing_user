@@ -34,9 +34,30 @@ import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 // Dashboard components
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
+import { getUsersCount } from "services/api";
+import { useEffect, useState } from "react";
 
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
+  const [counts, setCounts] = useState({
+    totalUsers: 0,
+    todayUsers: 0,
+  });
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const res = await getUsersCount(); // 👈 backend route
+        if (res.data.success) {
+          setCounts(res.data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching counts:", err);
+      }
+    };
+
+    fetchCounts();
+  }, []);
 
   return (
     <DashboardLayout>
@@ -47,28 +68,28 @@ function Dashboard() {
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="dark"
-                icon="weekend"
+                icon="group"
                 title="Total Users"
-                count={281}
-                percentage={{
-                  color: "success",
-                  amount: "+55%",
-                  label: "than lask week",
-                }}
+                count={counts.totalUsers}
+                // percentage={{
+                //   color: "success",
+                //   amount: "+55%",
+                //   label: "than lask week",
+                // }}
               />
             </MDBox>
           </Grid>
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
-                icon="leaderboard"
+                icon="group"
                 title="Today's Users"
-                count="2,300"
-                percentage={{
-                  color: "success",
-                  amount: "+3%",
-                  label: "than last month",
-                }}
+                count={counts.todayUsers} // 👈 backend se aaya
+                // percentage={{
+                //   color: "success",
+                //   amount: "+3%",
+                //   label: "than last month",
+                // }}
               />
             </MDBox>
           </Grid>

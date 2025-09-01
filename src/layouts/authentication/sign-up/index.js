@@ -38,6 +38,7 @@ import bgImage from "assets/images/bg-sign-up-cover.jpeg";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { signup } from "services/api";
+import logo from "assets/images/Dream-logo.jpeg";
 
 function Cover() {
   const { t } = useTranslation();
@@ -192,6 +193,10 @@ function Cover() {
           mb={1}
           textAlign="center"
         >
+          {/* 🔹 Logo */}
+          <MDBox display="flex" justifyContent="center" mb={1}>
+            <img src={logo} alt="DreamGate Logo" style={{ height: "50px", borderRadius: "8px" }} />
+          </MDBox>
           <MDTypography variant="h5" fontWeight="medium" color="white" mt={1}>
             {t("signupTitle")}
           </MDTypography>

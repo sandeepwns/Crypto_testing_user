@@ -59,10 +59,14 @@ import {
 import AccountMenu from "./accountMenu";
 import { getUserById, updateAutoTrading } from "services/api";
 import { useAuth } from "context/authContext";
+import { getUserBalance } from "services/api";
+import MDTypography from "components/MDTypography";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const { user } = useAuth();
   const [navbarType, setNavbarType] = useState();
+  const [balance, setBalance] = useState(null);
+  const [loadingBalance, setLoadingBalance] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [userData, setUser] = useState(null);
@@ -115,6 +119,38 @@ function DashboardNavbar({ absolute, light, isMini }) {
       })
       .catch((err) => console.error("Error fetching user:", err));
   }, [savedUser.id]);
+
+  useEffect(() => {
+    let interval;
+
+    if (savedUser?.id) {
+      // first time call immediately
+      fetchBalance(savedUser.id);
+
+      // then repeat every 10 seconds
+      interval = setInterval(() => {
+        fetchBalance(savedUser.id);
+      }, 250000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval); // cleanup
+    };
+  }, [savedUser?.id]);
+
+  const fetchBalance = async (userId) => {
+    try {
+      setLoadingBalance(true);
+      const res = await getUserBalance(userId); // API call
+      console.log("data :", res.data);
+      setBalance(res.data?.data?.cross_available || 0);
+    } catch (err) {
+      console.error("Error fetching balance:", err);
+    } finally {
+      setLoadingBalance(false);
+    }
+  };
+  console.log("balance :", balance);
 
   const handleToggle = async (event) => {
     const checked = event.target.checked;
@@ -363,6 +399,29 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 </Box>
               </FormControl>
             )}
+            {role === "user" && (
+              <MDBox
+                px={2}
+                py={1}
+                borderRadius="8px"
+                bgcolor="#ffffff"
+                border="1px solid #e0e0e0"
+                display="flex"
+                alignItems="center"
+                gap={1}
+              >
+                <Icon color="action">account_balance_wallet</Icon>
+                <MDTypography variant="body2" sx={{ fontWeight: 400, color: "#abb0bf" }}>
+                  {loadingBalance ? (
+                    "Loading..."
+                  ) : (
+                    <>
+                      {t("balance")}: ${Number(balance ?? 0).toFixed(2)}
+                    </>
+                  )}
+                </MDTypography>
+              </MDBox>
+            )}
 
             {/* Right side icons aligned center */}
             <MDBox
@@ -373,6 +432,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
               color={light ? "white" : "inherit"}
             >
               <AccountMenu light={light} darkMode={darkMode} iconsStyle={iconsStyle} />
+
               <IconButton
                 size="small"
                 disableRipple

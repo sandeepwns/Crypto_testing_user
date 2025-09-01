@@ -32,7 +32,6 @@ import { FormControl, Select, MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
 function BasicLayout({ image, children }) {
   const { i18n } = useTranslation();
-
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
   };

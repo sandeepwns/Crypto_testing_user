@@ -1,82 +1,163 @@
-// @mui material components
-import Card from "@mui/material/Card";
+import React, { useState } from "react";
 import Grid from "@mui/material/Grid";
-import Icon from "@mui/material/Icon";
-import Tooltip from "@mui/material/Tooltip";
-import TextField from "@mui/material/TextField";
-
-// Material Dashboard 2 React components
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
+import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
+import MDTypography from "components/MDTypography";
 import { useTranslation } from "react-i18next";
+import { changePassword } from "services/api";
+import { IconEye, IconEyeOff } from "@tabler/icons-react";
+import { IconButton, InputAdornment } from "@mui/material";
 
-// Material Dashboard 2 React context
-import { useMaterialUIController } from "context";
-import { useEffect, useState } from "react";
-import { Snackbar, Alert } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+export default function ChangePassword() {
+  const user = JSON.parse(localStorage.getItem("user")); // user localstorage se
+  const [formData, setFormData] = useState({
+    oldPassword: "",
+    newPassword: "",
+  });
 
-// ✅ import API service
-import { updateReferralCode } from "services/api";
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
-function ReferralCode() {
-  const [controller] = useMaterialUIController();
-  const { t } = useTranslation();
-  const { darkMode } = controller;
-  const navigate = useNavigate();
-
-  // ✅ State
-  const [referralCode, setReferralCode] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
+  const { t } = useTranslation();
 
-  // ✅ Load from localStorage when component mounts
-  useEffect(() => {
-    const savedCode = localStorage.getItem("referralCode");
-    if (savedCode) {
-      setReferralCode(savedCode);
-    }
-  }, []);
+  // ✅ Snackbar state
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success", // success | error | warning | info
+  });
 
-  const handleSave = async () => {
-    if (!referralCode.trim()) {
-      setSnackbar({
-        open: true,
-        message: "Referral code cannot be empty.",
-        severity: "error",
-      });
-      return;
-    }
+  // 🔹 handle input change
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // 🔹 validate fields
+  const validate = () => {
+    let tempErrors = {};
+    if (!formData.oldPassword) tempErrors.oldPassword = "Old password is required";
+    if (!formData.newPassword) tempErrors.newPassword = "New password is required";
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+
+  // 🔹 handle submit
+  const handleSubmit = async () => {
+    if (!validate()) return; // field validation
+    setLoading(true);
 
     try {
-      // ✅ Backend API call
-      await updateReferralCode({ code: referralCode });
+      const res = await changePassword(user.id, formData); // api call
+      console.log("response:", res.data);
 
-      // ✅ Save in localStorage
-      localStorage.setItem("referralCode", referralCode);
+      if (res.data.success) {
+        setSnackbar({
+          open: true,
+          message: "Password updated successfully!",
+          severity: "success",
+        });
+        // Reset form
+        setFormData({ oldPassword: "", newPassword: "" });
+      } else {
+        setSnackbar({
+          open: true,
+          message: res.data.error || "Something went wrong!",
+          severity: "error",
+        });
+      }
+    } catch (err) {
+      console.error("❌ Password Change Error:", err);
 
       setSnackbar({
         open: true,
-        message: "Referral Code saved successfully!",
-        severity: "success",
-      });
-      // setTimeout(() => {
-      //   navigate("/dashboard");
-      // }, 3000);
-    } catch (error) {
-      console.error("❌ Error saving referral code:", error);
-      setSnackbar({
-        open: true,
-        message: "Failed to save Referral Code. Please try again.",
+        message:
+          err.response?.data?.error || // backend ka error (Old password incorrect)
+          err.message ||
+          "Something went wrong!",
         severity: "error",
       });
     }
+
+    setLoading(false);
   };
 
   return (
-    <Card>
+    <MDBox p={3} shadow="sm" borderRadius="lg" bgColor="white">
+      <MDTypography variant="h6" fontWeight="medium">
+        {t("changePassword")}
+      </MDTypography>
+      <Grid container mt={0.2} spacing={3}>
+        {/* Old Password */}
+        <Grid item xs={12} md={6}>
+          <MDInput
+            type={showOldPassword ? "text" : "password"}
+            name="oldPassword"
+            label={t("oldPassword")}
+            value={formData.oldPassword}
+            onChange={handleChange}
+            fullWidth
+            required
+            helperText={errors.oldPassword}
+            sx={{
+              "& .MuiFormHelperText-root": {
+                color: "red",
+              },
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowOldPassword(!showOldPassword)} edge="end">
+                    {showOldPassword ? <IconEyeOff stroke={1.25} /> : <IconEye stroke={1.25} />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+
+        {/* New Password */}
+        <Grid item xs={12} md={6}>
+          <MDInput
+            type={showNewPassword ? "text" : "password"}
+            name="newPassword"
+            label={t("newPassword")}
+            value={formData.newPassword}
+            onChange={handleChange}
+            required
+            fullWidth
+            helperText={errors.newPassword}
+            sx={{
+              "& .MuiFormHelperText-root": {
+                color: "red",
+              },
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowNewPassword(!showNewPassword)} edge="end">
+                    {showNewPassword ? <IconEyeOff stroke={1.25} /> : <IconEye stroke={1.25} />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+
+        {/* Submit Button */}
+        <Grid item xs={12}>
+          <MDButton variant="gradient" color="info" onClick={handleSubmit} disabled={loading}>
+            {loading ? "Updating..." : t("saveChanges")}
+          </MDButton>
+        </Grid>
+      </Grid>
+
+      {/* ✅ Snackbar */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
@@ -87,68 +168,6 @@ function ReferralCode() {
           {snackbar.message}
         </Alert>
       </Snackbar>
-
-      <MDBox pt={2} px={2} display="flex" justifyContent="space-between" alignItems="center">
-        <MDTypography variant="h6" fontWeight="medium">
-          {t("Referral Code")}
-        </MDTypography>
-      </MDBox>
-
-      <MDBox p={2}>
-        <Grid container spacing={3}>
-          {/* Referral Code */}
-          <Grid item xs={12} md={6}>
-            <MDTypography variant="subtitle2" color="textSecondary" gutterBottom>
-              {t("Your Referral Code")}
-            </MDTypography>
-            <MDBox
-              borderRadius="lg"
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              p={3}
-              sx={{
-                border: ({ borders: { borderWidth, borderColor } }) =>
-                  `${borderWidth[1]} solid ${borderColor}`,
-              }}
-            >
-              {isEditing ? (
-                <TextField
-                  fullWidth
-                  size="small"
-                  value={referralCode}
-                  onChange={(e) => setReferralCode(e.target.value)}
-                />
-              ) : (
-                <MDTypography variant="h6" fontWeight="medium">
-                  {referralCode || "Not Set"}
-                </MDTypography>
-              )}
-
-              <MDBox ml="auto" lineHeight={0} color={darkMode ? "white" : "dark"}>
-                <Tooltip title={isEditing ? "Done" : "Edit Referral Code"} placement="top">
-                  <Icon
-                    sx={{ cursor: "pointer" }}
-                    fontSize="small"
-                    onClick={() => setIsEditing(!isEditing)}
-                  >
-                    {isEditing ? "check" : "edit"}
-                  </Icon>
-                </Tooltip>
-              </MDBox>
-            </MDBox>
-          </Grid>
-
-          {/* Save Button */}
-          <Grid item xs={12} display="flex" justifyContent="flex-end">
-            <MDButton variant="contained" color="info" onClick={handleSave}>
-              {t("save")}
-            </MDButton>
-          </Grid>
-        </Grid>
-      </MDBox>
-    </Card>
+    </MDBox>
   );
 }
-
-export default ReferralCode;
