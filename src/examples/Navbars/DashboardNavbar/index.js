@@ -246,109 +246,48 @@ function DashboardNavbar({ absolute, light, isMini }) {
       </Snackbar>
 
       <Toolbar sx={(theme) => navbarContainer(theme)}>
-        <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} variant="filled">
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
+
+        {/* Left side: Breadcrumb */}
+        <MDBox
+          color="inherit"
+          mb={{ xs: 1, md: 0 }}
+          sx={(theme) => navbarRow(theme, { isMini })}
+          flex={{ xs: "1 1 100%", md: "0 0 auto" }}
+        >
           <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
         </MDBox>
-        {isMini ? null : (
-          // <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-          //   {/* <MDBox pr={1}>
-          //     <MDInput label={t("SearchHere")} />
-          //   </MDBox> */}
-          //   <FormControl component="fieldset" sx={{ display: "flex", alignItems: "center" }}>
-          //     {/* Label upar */}
-          //     <FormLabel component="legend" sx={{ mb: 1, fontSize: "14px", fontWeight: 600 }}>
-          //       Auto Trading
-          //     </FormLabel>
 
-          //     {/* Switch with Yes / No */}
-          //     <Box display="flex" alignItems="center" gap={1}>
-          //       {/* Left side - No */}
-          //       <Typography
-          //         variant="body2"
-          //         sx={{ fontSize: "14px", fontWeight: !autoTrading ? 600 : 400 }}
-          //         color={autoTrading ? "text.secondary" : "primary"}
-          //       >
-          //         No
-          //       </Typography>
-
-          //       {/* Toggle Switch - small size */}
-          //       <Switch
-          //         checked={autoTrading}
-          //         onChange={handleToggle}
-          //         color="primary"
-          //         size="small"
-          //       />
-
-          //       {/* Right side - Yes */}
-          //       <Typography
-          //         variant="body2"
-          //         sx={{ fontSize: "14px", fontWeight: autoTrading ? 600 : 400 }}
-          //         color={autoTrading ? "primary" : "text.secondary"}
-          //       >
-          //         Yes
-          //       </Typography>
-          //     </Box>
-          //   </FormControl>
-          //   <MDBox
-          //     display="flex"
-          //     alignItems="center"
-          //     justifyContent="center"
-          //     gap={1}
-          //     color={light ? "white" : "inherit"}
-          //   >
-          //     {/* <Link>
-          //       <IconButton sx={navbarIconButton} size="small" disableRipple>
-          //         <Icon sx={iconsStyle}>account_circle</Icon>
-          //       </IconButton>
-          //     </Link> */}
-          //     <AccountMenu light={light} darkMode={darkMode} iconsStyle={iconsStyle} />
-          //     <IconButton
-          //       size="small"
-          //       disableRipple
-          //       color="inherit"
-          //       sx={navbarMobileMenu}
-          //       onClick={handleMiniSidenav}
-          //     >
-          //       <Icon sx={iconsStyle} fontSize="medium">
-          //         {miniSidenav ? "menu_open" : "menu"}
-          //       </Icon>
-          //     </IconButton>
-          //     <LanguageSwitcher />
-          //     {/* <IconButton
-          //       size="small"
-          //       disableRipple
-          //       color="inherit"
-          //       sx={navbarIconButton}
-          //       onClick={handleConfiguratorOpen}
-          //     >
-          //       <Icon sx={iconsStyle}>settings</Icon>
-          //     </IconButton> */}
-          //     <IconButton
-          //       size="small"
-          //       disableRipple
-          //       color="inherit"
-          //       sx={navbarIconButton}
-          //       aria-controls="notification-menu"
-          //       aria-haspopup="true"
-          //       variant="contained"
-          //       onClick={handleOpenMenu}
-          //     >
-          //       <Icon sx={iconsStyle}>notifications</Icon>
-          //     </IconButton>
-          //     {renderMenu()}
-          //   </MDBox>
-          // </MDBox>
+        {/* Right side: responsive container */}
+        {!isMini && (
           <MDBox
             sx={(theme) => navbarRow(theme, { isMini })}
             display="flex"
+            flexWrap="wrap"
             alignItems="center"
+            justifyContent="flex-end"
             gap={2}
+            flex={{ xs: "1 1 100%", md: "0 0 auto" }}
           >
-            {/* Auto Trading Toggle */}
+            {/* Auto Trading Switch (only for user) */}
             {role === "user" && (
               <FormControl
                 component="fieldset"
-                sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: { xs: "row", md: "column" },
+                }}
               >
                 <FormLabel
                   component="legend"
@@ -358,16 +297,15 @@ function DashboardNavbar({ absolute, light, isMini }) {
                     textAlign: "center",
                     lineHeight: 1,
                     color: "#9ea2b5 !important",
-                    "&.Mui-focused": {
-                      color: "#9ea2b5 !important",
-                    },
+                    "&.Mui-focused": { color: "#9ea2b5 !important" },
+                    mb: { xs: 0, md: 0.5 },
+                    mr: { xs: 1, md: 0 },
                   }}
                 >
                   {t("autoTrading")}
                 </FormLabel>
 
-                {/* Switch with Yes / No */}
-                <Box display="flex" alignItems="center" gap={0.5} mt={0.5}>
+                <Box display="flex" alignItems="center" gap={0.5} mt={{ xs: 0, md: 0.5 }}>
                   <Typography
                     variant="body2"
                     sx={{ fontSize: "12px", fontWeight: 500, color: "#9ea2b5" }}
@@ -382,11 +320,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                     size="small"
                     sx={{
                       mt: "2px",
-                      "& .MuiSwitch-thumb": {
-                        width: 16,
-                        height: 16,
-                        marginTop: "2px",
-                      },
+                      "& .MuiSwitch-thumb": { width: 16, height: 16, marginTop: "2px" },
                     }}
                   />
 
@@ -399,6 +333,8 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 </Box>
               </FormControl>
             )}
+
+            {/* Balance card */}
             {role === "user" && (
               <MDBox
                 px={2}
@@ -408,27 +344,26 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 border="1px solid #e0e0e0"
                 display="flex"
                 alignItems="center"
+                justifyContent="center"
                 gap={1}
+                flexShrink={0}
               >
                 <Icon color="action">account_balance_wallet</Icon>
                 <MDTypography variant="body2" sx={{ fontWeight: 400, color: "#abb0bf" }}>
-                  {loadingBalance ? (
-                    "Loading..."
-                  ) : (
-                    <>
-                      {t("balance")}: ${Number(balance ?? 0).toFixed(2)}
-                    </>
-                  )}
+                  {loadingBalance
+                    ? "Loading..."
+                    : `${t("balance")}: $${Number(balance ?? 0).toFixed(2)}`}
                 </MDTypography>
               </MDBox>
             )}
 
-            {/* Right side icons aligned center */}
+            {/* Right side icons */}
             <MDBox
               display="flex"
               alignItems="center"
               justifyContent="center"
               gap={1}
+              flexWrap="wrap"
               color={light ? "white" : "inherit"}
             >
               <AccountMenu light={light} darkMode={darkMode} iconsStyle={iconsStyle} />
@@ -444,7 +379,9 @@ function DashboardNavbar({ absolute, light, isMini }) {
                   {miniSidenav ? "menu_open" : "menu"}
                 </Icon>
               </IconButton>
+
               <LanguageSwitcher />
+
               <IconButton
                 size="small"
                 disableRipple
@@ -457,7 +394,6 @@ function DashboardNavbar({ absolute, light, isMini }) {
               >
                 <Icon sx={iconsStyle}>notifications</Icon>
               </IconButton>
-              {/* {renderMenu()} */}
             </MDBox>
           </MDBox>
         )}

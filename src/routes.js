@@ -51,6 +51,7 @@ import SignIn from "layouts/authentication/sign-in";
 import AdminSignIn from "layouts/authentication/sign-in/admin-sign-in/";
 import SignUp from "layouts/authentication/sign-up";
 import ProtectedRoute from "routes/protectedRoute";
+import VerifyEmail from "layouts/authentication/email/EmailVarify";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
@@ -176,6 +177,11 @@ const routes = [
     key: "sign-up",
     route: "/authentication/sign-up",
     component: <SignUp />,
+  },
+  {
+    key: "verify-email",
+    route: "/authentication/verify-email",
+    component: <VerifyEmail />,
   },
 ];
 

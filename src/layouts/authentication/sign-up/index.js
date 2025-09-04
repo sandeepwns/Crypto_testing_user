@@ -122,10 +122,17 @@ function Cover() {
       setReferralCodeError("Referral code is required"); // 👈 agar required hai
       isValid = false;
     }
+    if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9]+$/.test(referralCode)) {
+      setReferralCodeError("Referral code must contain both letters and numbers only");
+      isValid = false;
+    }
 
     // UID Validation
     if (!uid.trim()) {
       setUidError("UID is required");
+      isValid = false;
+    } else if (!/^\d+$/.test(uid)) {
+      setUidError("UID must contain only numbers");
       isValid = false;
     }
     // else if (!/^[A-Za-z0-9]{6,}$/.test(referralCode)) {
@@ -146,17 +153,31 @@ function Cover() {
       setLoading(true);
       const res = await signup({ name, email, password, confirmPassword, referralCode, uid });
 
+      // console.log("Signup Success:", res.data);
+      // setSnackbar({
+      //   open: true,
+      //   message: "Signup Success Please Login",
+      //   severity: "success",
+      // });
+
+      // // Redirect to login after success
+      // setTimeout(() => {
+      //   navigate("/authentication/sign-in");
+      // }, 2000);
+
       console.log("Signup Success:", res.data);
       setSnackbar({
         open: true,
-        message: "Signup Success Please Login",
+        message:
+          res.data.message || "Signup successful. Please check your email to verify your account.",
         severity: "success",
       });
-
-      // Redirect to login after success
-      setTimeout(() => {
-        navigate("/authentication/sign-in");
-      }, 2000);
+      setName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setReferralCode("");
+      setUid("");
     } catch (err) {
       setSnackbar({
         open: true,
@@ -209,6 +230,7 @@ function Cover() {
                 label={t("name")}
                 variant="standard"
                 fullWidth
+                value={name}
                 onChange={(e) => setName(e.target.value)}
               />
               {nameError && (
@@ -223,6 +245,7 @@ function Cover() {
                 label={t("email")}
                 variant="standard"
                 fullWidth
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
               {emailError && (
@@ -237,6 +260,7 @@ function Cover() {
                 label={t("password")}
                 variant="standard"
                 fullWidth
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 InputProps={{
                   endAdornment: (
@@ -260,6 +284,7 @@ function Cover() {
                 label={t("confirmPassword")}
                 variant="standard"
                 fullWidth
+                value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 InputProps={{
                   endAdornment: (
@@ -290,6 +315,7 @@ function Cover() {
                 label={t("referralcode")}
                 variant="standard"
                 fullWidth
+                value={referralCode}
                 onChange={(e) => setReferralCode(e.target.value)}
               />
               {referralCodeError && (
@@ -304,6 +330,7 @@ function Cover() {
                 label={t("UID")}
                 variant="standard"
                 fullWidth
+                value={uid}
                 onChange={(e) => setUid(e.target.value)}
               />
               {uidError && (

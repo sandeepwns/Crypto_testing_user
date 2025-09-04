@@ -83,4 +83,14 @@ export const getOpenPosition = async (id) => {
 export const getUsersCount = async () => {
   return await api.get("/users/stats");
 };
+
+// ✅ Send verification email (after signup)
+export const sendVerificationEmail = async (id) => {
+  return await api.post(`/users/${id}/send-verification`);
+};
+
+export const verifyEmail = async (token) => {
+  return await api.get(`/users/verifyemail/${token}`);
+};
+
 export default api;

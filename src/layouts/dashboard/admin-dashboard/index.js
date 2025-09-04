@@ -36,9 +36,11 @@ import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import { getUsersCount } from "services/api";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
+  const { t } = useTranslation();
   const [counts, setCounts] = useState({
     totalUsers: 0,
     todayUsers: 0,
@@ -69,7 +71,7 @@ function Dashboard() {
               <ComplexStatisticsCard
                 color="dark"
                 icon="group"
-                title="Total Users"
+                title={t("totalUsers")}
                 count={counts.totalUsers}
                 // percentage={{
                 //   color: "success",
@@ -83,7 +85,7 @@ function Dashboard() {
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 icon="group"
-                title="Today's Users"
+                title={t("todaysUsers")}
                 count={counts.todayUsers} // 👈 backend se aaya
                 // percentage={{
                 //   color: "success",

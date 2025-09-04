@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useState, useEffect, useCallback } from "react";
 import { getUsers, changeUserStatus } from "services/api";
 import { getOpenPosition } from "services/api";
+import { whitespace } from "stylis";
 
 export default function useAuthorsTableData(page, limit) {
   const { t } = useTranslation();
@@ -141,7 +142,7 @@ export default function useAuthorsTableData(page, limit) {
         </MDTypography>
       ),
       current: (
-        <MDTypography variant="caption" fontWeight="medium">
+        <MDTypography variant="caption" fontWeight="medium" sx={{ whiteSpace: "nowrap" }}>
           {pos.mark_price}
         </MDTypography>
       ),

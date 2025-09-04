@@ -58,7 +58,26 @@ function Tables() {
                 />
               </MDBox>
 
-              <MDBox display="flex" justifyContent="center" p={2}>
+              {/* <MDBox display="flex" justifyContent="center" p={2}>
+                <Pagination
+                  count={totalPages}
+                  page={page}
+                  onChange={handleChangePage}
+                  color="info"
+                />
+              </MDBox> */}
+              <MDBox
+                display="flex"
+                justifyContent="center"
+                p={2}
+                sx={{
+                  position: "sticky",
+                  bottom: 0,
+                  backgroundColor: "#fff", // 👈 background white
+                  borderTop: "1px solid #e0e0e0", // 👈 line add hogi upar
+                  zIndex: 10,
+                }}
+              >
                 <Pagination
                   count={totalPages}
                   page={page}
