@@ -253,7 +253,10 @@ function DashboardNavbar({ absolute, light, isMini }) {
                     onChange={handleToggle}
                     color="primary"
                     size="small"
-                    sx={{ "& .MuiSwitch-thumb": { width: 16, height: 16 } }}
+                    sx={{
+                      mt: "2px",
+                      "& .MuiSwitch-thumb": { width: 16, height: 16, marginTop: "2px" },
+                    }}
                   />
 
                   <Typography
@@ -318,7 +321,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
               sx={navbarIconButton}
               aria-controls="notification-menu"
               aria-haspopup="true"
-              onClick={handleOpenMenu}
+              // onClick={handleOpenMenu}
             >
               <Icon sx={iconsStyle}>notifications</Icon>
             </IconButton>
@@ -373,9 +376,11 @@ function DashboardNavbar({ absolute, light, isMini }) {
                   onChange={handleToggle}
                   color="primary"
                   size="small"
-                  sx={{ "& .MuiSwitch-thumb": { width: 16, height: 16 } }}
+                  sx={{
+                    mt: "2px",
+                    "& .MuiSwitch-thumb": { width: 16, height: 16, marginTop: "2px" },
+                  }}
                 />
-
                 <Typography
                   variant="body2"
                   sx={{ fontSize: "12px", fontWeight: 500, color: "#9ea2b5" }}
