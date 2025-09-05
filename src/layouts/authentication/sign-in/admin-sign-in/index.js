@@ -105,7 +105,7 @@ function Basic() {
       setServerError("");
 
       const res = await adminLogin({ email, password });
-      const { token, user, code } = res.data;
+      const { token, user, code } = res?.data;
 
       // Role check
       if (user.role !== "admin") {
@@ -119,6 +119,7 @@ function Basic() {
       } else {
         sessionStorage.setItem("token", token);
       }
+      localStorage.setItem("token", token);
       localStorage.setItem("role", user.role);
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("referralCode", code);
@@ -131,7 +132,9 @@ function Basic() {
 
       // Redirect
       setTimeout(() => {
+        console.log("Hllo shyamm");
         navigate("/dashboard/admin");
+        console.log("Hllo shyamm44");
       }, 2000);
     } catch (err) {
       console.log("Error:", err);

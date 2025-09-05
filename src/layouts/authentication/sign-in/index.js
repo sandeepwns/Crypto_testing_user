@@ -119,7 +119,7 @@ function Basic() {
 
       setSnackbar({
         open: true,
-        message: t("validation.loginSuccess"),
+        message: "Login Successfully",
         severity: "success",
       });
 
