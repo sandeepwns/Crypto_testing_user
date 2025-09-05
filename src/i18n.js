@@ -1,6 +1,7 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
+import { Password } from "@mui/icons-material";
 
 i18n
   .use(LanguageDetector)
@@ -66,6 +67,18 @@ i18n
           iAgree: "I agree the",
           InactiveMessage: "You are Inactive. Please contact admin.",
           saveChanges: "Save Changes",
+          validation: {
+            name: "Full name is required.",
+            email: "Enter a valid email address.",
+            password: "Password is required. Please create one to continue.",
+            confirmPassword: "Re-enter the same password to confirm.",
+            referralCode: "Referral code must include both letters and numbers (e.g., ABC123).",
+            uid: "Enter your unique ID to proceed.",
+            passwordLength: "Password must be at least 6 characters.",
+            passwordMismatch: "Passwords do not match.",
+            uidOnlyNumbers: "UID must contain only numbers.",
+            Passwordr: "Password is required.",
+          },
         },
       },
       ko: {
@@ -130,6 +143,19 @@ i18n
           signIn: "로그인",
           password: "비밀번호",
           InactiveMessage: "현재 활동이 없습니다. 관리자에게 문의하세요.",
+
+          validation: {
+            name: "이름을 입력하세요.",
+            email: "유효한 이메일 주소를 입력하세요.",
+            password: "비밀번호가 필요합니다. 계속하려면 만들어주세요.",
+            confirmPassword: "같은 비밀번호를 다시 입력하여 확인하세요.",
+            referralCode: "추천 코드는 문자와 숫자를 모두 포함해야 합니다. (예: ABC123)",
+            uid: "계속하려면 사용자 고유 ID를 입력하세요.",
+            passwordLength: "비밀번호는 최소 6자 이상이어야 합니다.",
+            passwordMismatch: "비밀번호가 일치하지 않습니다.",
+            uidOnlyNumbers: "사용자 ID는 숫자만 포함해야 합니다.",
+            Passwordr: "비밀번호가 필요합니다",
+          },
         },
       },
     },

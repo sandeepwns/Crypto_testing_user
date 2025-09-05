@@ -22,23 +22,14 @@ import { Link, useNavigate } from "react-router-dom";
 import Card from "@mui/material/Card";
 import Switch from "@mui/material/Switch";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
-import { IconButton, InputAdornment } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
-import Grid from "@mui/material/Grid";
-import MuiLink from "@mui/material/Link";
+import { IconButton, InputAdornment, Snackbar, Alert, CircularProgress } from "@mui/material";
 import logo from "assets/images/Dream-logo.jpeg";
-
-// @mui icons
-import FacebookIcon from "@mui/icons-material/Facebook";
-import GitHubIcon from "@mui/icons-material/GitHub";
-import GoogleIcon from "@mui/icons-material/Google";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
-import { Snackbar, Alert } from "@mui/material";
 
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
@@ -47,89 +38,103 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 import { useTranslation } from "react-i18next";
 import { adminLogin } from "services/api";
-import { ClassSharp } from "@mui/icons-material";
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  // 🔹 Form states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
 
   // 🔹 Error states
   const [emailError, setEmailError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
   const [serverError, setServerError] = useState("");
+
+  // UI states
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
+  // 🔹 Common Validation
+  const validateField = (field, value) => {
+    switch (field) {
+      case "email":
+        if (!value.trim()) return t("validation.email");
+        return /\S+@\S+\.\S+/.test(value) ? "" : t("validation.email");
+      case "password":
+        if (!value.trim()) return t("validation.Passwordr");
+      default:
+        return "";
+    }
+  };
+
+  // 🔹 OnChange handlers
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+    setEmailError(validateField("email", value));
+  };
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    setPasswordError(validateField("password", value));
+  };
+
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+
+  // 🔹 Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Reset errors
-    setEmailError("");
-    setPasswordError("");
-    setServerError("");
+    // Run validation again on submit
+    const emailErr = validateField("email", email);
+    const passwordErr = validateField("password", password);
 
-    let isValid = true;
+    setEmailError(emailErr);
+    setPasswordError(passwordErr);
 
-    if (!email) {
-      setEmailError("Email is required");
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailError("Enter a valid email");
-      isValid = false;
-    }
-
-    if (!password) {
-      setPasswordError("Password is required");
-      isValid = false;
-    }
-
-    if (!isValid) return;
+    if (emailErr || passwordErr) return;
 
     try {
-      // 🔹 API Call
       setLoading(true);
+      setServerError("");
+
       const res = await adminLogin({ email, password });
-
       const { token, user, code } = res.data;
-      console.log(res.data);
 
-      // ❌ Agar user admin nahi hai toh error dikhado
+      // Role check
       if (user.role !== "admin") {
         setServerError("Only admins are allowed to login here.");
         return;
       }
 
-      // ✅ Save token in storage
+      // ✅ Save token + user
       if (rememberMe) {
         localStorage.setItem("token", token);
       } else {
         sessionStorage.setItem("token", token);
       }
-
-      // Save role
       localStorage.setItem("role", user.role);
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("referralCode", code);
+
       setSnackbar({
         open: true,
         message: "Login Successfully",
         severity: "success",
       });
-      // ✅ Redirect admin
 
+      // Redirect
       setTimeout(() => {
         navigate("/dashboard/admin");
       }, 2000);
     } catch (err) {
-      console.log("Error :", err);
+      console.log("Error:", err);
       setSnackbar({
         open: true,
         message: "Invalid credentials. Try again.",
@@ -137,12 +142,14 @@ function Basic() {
       });
       setServerError(err.response?.data?.message || "Invalid credentials. Try again.");
     } finally {
-      setLoading(false); // 👈 Loader stop
+      setLoading(false);
     }
   };
+
   return (
     <BasicLayout image={bgImage}>
       <Card>
+        {/* Snackbar */}
         <Snackbar
           open={snackbar.open}
           autoHideDuration={3000}
@@ -153,6 +160,8 @@ function Basic() {
             {snackbar.message}
           </Alert>
         </Snackbar>
+
+        {/* Header */}
         <MDBox
           variant="gradient"
           bgColor="info"
@@ -164,7 +173,6 @@ function Basic() {
           mb={1}
           textAlign="center"
         >
-          {/* 🔹 Logo */}
           <MDBox display="flex" justifyContent="center" mb={1}>
             <img src={logo} alt="DreamGate Logo" style={{ height: "50px", borderRadius: "8px" }} />
           </MDBox>
@@ -172,14 +180,18 @@ function Basic() {
             {t("dreamGateAdminSignIn")}
           </MDTypography>
         </MDBox>
+
+        {/* Form */}
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form" onSubmit={handleSubmit}>
+            {/* Email */}
             <MDBox mb={2}>
               <MDInput
                 type="email"
                 label={t("email")}
                 fullWidth
-                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                onChange={handleEmailChange}
               />
               {emailError && (
                 <MDTypography variant="caption" color="error">
@@ -187,12 +199,15 @@ function Basic() {
                 </MDTypography>
               )}
             </MDBox>
+
+            {/* Password */}
             <MDBox mb={2}>
               <MDInput
                 type={showPassword ? "text" : "password"}
                 label={t("password")}
                 fullWidth
-                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                onChange={handlePasswordChange}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -209,6 +224,8 @@ function Basic() {
                 </MDTypography>
               )}
             </MDBox>
+
+            {/* Remember me */}
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />
               <MDTypography
@@ -221,6 +238,7 @@ function Basic() {
                 &nbsp;&nbsp;{t("rememberMe")}
               </MDTypography>
             </MDBox>
+
             {/* Server Error */}
             {serverError && (
               <MDTypography variant="button" color="error" sx={{ fontSize: "0.9rem" }}>
@@ -228,6 +246,7 @@ function Basic() {
               </MDTypography>
             )}
 
+            {/* Submit Button */}
             <MDBox mt={4} mb={1}>
               <MDButton variant="gradient" color="info" fullWidth type="submit" disabled={loading}>
                 {loading ? <CircularProgress size={24} color="inherit" /> : t("signIn")}

@@ -44,9 +44,10 @@ import Referral from "layouts/referral";
 import Position from "layouts/openPosition";
 import UpdateProfile from "layouts/update_profile";
 import ChangePassword from "layouts/change_password";
-import RTL from "layouts/rtl";
-import Notifications from "layouts/notifications";
-import Profile from "layouts/profile";
+// import RTL from "layouts/rtl";
+// import Notifications from "layouts/notifications";
+// import Profile from "layouts/profile";
+import HowToCreateApiKey from "layouts/billing/components/PaymentMethod/how to setup/howtosetupapikey";
 import SignIn from "layouts/authentication/sign-in";
 import AdminSignIn from "layouts/authentication/sign-in/admin-sign-in/";
 import SignUp from "layouts/authentication/sign-up";
@@ -113,6 +114,16 @@ const routes = [
     component: (
       <ProtectedRoute allowedRoles={["user"]}>
         <Position />
+      </ProtectedRoute>
+    ),
+    allowedRoles: ["user"],
+  },
+  {
+    key: "howToSetup",
+    route: "/howToSetup",
+    component: (
+      <ProtectedRoute allowedRoles={["user"]}>
+        <HowToCreateApiKey />
       </ProtectedRoute>
     ),
     allowedRoles: ["user"],

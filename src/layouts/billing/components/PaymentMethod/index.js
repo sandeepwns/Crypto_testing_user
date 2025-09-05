@@ -111,6 +111,15 @@ function PaymentMethod() {
         <MDTypography variant="h6" fontWeight="medium">
           {t("apikey")}
         </MDTypography>
+        {/* 👉 How to Create API Key Link */}
+        <MDTypography
+          variant="button"
+          color="info"
+          sx={{ cursor: "pointer", textDecoration: "underline" }}
+          onClick={() => window.open("/howToSetup", "_blank")}
+        >
+          How to create API Key?
+        </MDTypography>
       </MDBox>
 
       <MDBox p={2}>
